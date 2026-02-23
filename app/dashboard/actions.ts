@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { GROCERY_CATEGORIES, GROCERY_UNITS } from "@/lib/types";
-import type { GroceryCategory, GroceryUnit } from "@/lib/types";
+import type { GroceryCategory, GroceryUnit, ListType } from "@/lib/types";
 
 export async function signOut() {
   const supabase = await createClient();
@@ -28,6 +28,7 @@ export async function addGrocery(
   const category = formData.get("category") as string | null;
   const amountRaw = formData.get("amount") as string | null;
   const unit = formData.get("unit") as string | null;
+  const listTypeRaw = formData.get("list_type") as string | null;
 
   if (!name) return { error: "Varenavn er påkrevd." };
 
@@ -46,11 +47,18 @@ export async function addGrocery(
     return { error: "Ugyldig enhet." };
   }
 
+  const validListTypes: ListType[] = ["shopping", "inventory"];
+  const listType: ListType =
+    listTypeRaw && validListTypes.includes(listTypeRaw as ListType)
+      ? (listTypeRaw as ListType)
+      : "shopping";
+
   const { error } = await supabase.from("groceries").insert({
     name,
     category,
     amount,
     unit,
+    list_type: listType,
   });
 
   if (error) return { error: "Kunne ikke legge til vare. Prøv igjen." };

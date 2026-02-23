@@ -31,11 +31,14 @@ export const GROCERY_UNITS: { value: GroceryUnit; label: string }[] = [
   { value: "pak", label: "pakke" },
 ];
 
+export type ListType = "shopping" | "inventory";
+
 export interface Grocery {
   id: string;
   name: string;
   category: GroceryCategory;
   amount: number;
   unit: GroceryUnit;
+  list_type: ListType;
   created_at: string;
 }

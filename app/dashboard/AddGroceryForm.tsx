@@ -3,8 +3,9 @@
 import { useActionState, useEffect, useRef } from "react";
 import { addGrocery } from "./actions";
 import { GROCERY_CATEGORIES, GROCERY_UNITS } from "@/lib/types";
+import type { ListType } from "@/lib/types";
 
-export default function AddGroceryForm() {
+export default function AddGroceryForm({ listType }: { listType: ListType }) {
   const [state, formAction, isPending] = useActionState(addGrocery, {
     error: null,
   });
@@ -18,6 +19,7 @@ export default function AddGroceryForm() {
 
   return (
     <form ref={formRef} action={formAction} className="space-y-3">
+      <input type="hidden" name="list_type" value={listType} />
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
         <input
           type="text"

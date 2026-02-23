@@ -1,11 +1,21 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { GROCERY_CATEGORIES } from "@/lib/types";
-import type { Grocery } from "@/lib/types";
+import type { Grocery, ListType } from "@/lib/types";
 import { signOut, deleteGrocery } from "./actions";
 import AddGroceryForm from "./AddGroceryForm";
+import TabSwitcher from "./TabSwitcher";
 
-export default async function Dashboard() {
+const TAB_LABELS: Record<ListType, string> = {
+  shopping: "Handleliste",
+  inventory: "Beholdning",
+};
+
+export default async function Dashboard({
+  searchParams,
+}: {
+  searchParams: Promise<{ tab?: string }>;
+}) {
   const supabase = await createClient();
 
   const {
@@ -13,9 +23,14 @@ export default async function Dashboard() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
+  const { tab } = await searchParams;
+  const activeTab: ListType =
+    tab === "shopping" || tab === "inventory" ? tab : "shopping";
+
   const { data } = await supabase
     .from("groceries")
     .select("*")
+    .eq("list_type", activeTab)
     .order("created_at", { ascending: false });
 
   const groceries: Grocery[] = data ?? [];
@@ -41,18 +56,27 @@ export default async function Dashboard() {
           </form>
         </div>
 
+        {/* Tab switcher */}
+        <TabSwitcher activeTab={activeTab} />
+
         {/* Add grocery card */}
         <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
           <h2 className="text-lg font-semibold text-gray-700">Legg til vare</h2>
-          <AddGroceryForm />
+          <AddGroceryForm listType={activeTab} />
         </div>
 
         {/* Grocery list card */}
         <div className="bg-white rounded-2xl shadow-sm p-6 space-y-6">
-          <h2 className="text-lg font-semibold text-gray-700">Handleliste</h2>
+          <h2 className="text-lg font-semibold text-gray-700">
+            {TAB_LABELS[activeTab]}
+          </h2>
 
           {grouped.length === 0 ? (
-            <p className="text-gray-400 text-sm">Ingen varer lagt til ennå.</p>
+            <p className="text-gray-400 text-sm">
+              {activeTab === "shopping"
+                ? "Ingen varer på handlelisten ennå."
+                : "Ingen varer i beholdningen ennå."}
+            </p>
           ) : (
             grouped.map((cat) => (
               <div key={cat.value}>
