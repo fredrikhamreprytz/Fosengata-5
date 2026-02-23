@@ -20,6 +20,16 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Technology
+
+| Technology | Why it was chosen |
+|---|---|
+| **[Next.js](https://nextjs.org)** | Full-stack React framework with file-based routing, server components, and built-in API routes — ideal for a household app that needs both a frontend and server-side logic in one project. |
+| **[React](https://react.dev)** | Industry-standard UI library with a large ecosystem. Server Components (React 19) reduce client-side JavaScript and improve performance. |
+| **[TypeScript](https://www.typescriptlang.org)** | Catches type errors at compile time, making the codebase more maintainable and less error-prone as it grows. |
+| **[Tailwind CSS v4](https://tailwindcss.com)** | Utility-first CSS framework that allows rapid UI development without leaving the markup. v4 drops the config file and is faster to build. |
+| **[Supabase](https://supabase.com)** | Open-source Firebase alternative providing a hosted Postgres database, authentication, and real-time subscriptions out of the box — no backend infrastructure to manage. |
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
