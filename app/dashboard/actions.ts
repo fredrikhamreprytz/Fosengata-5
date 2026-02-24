@@ -211,6 +211,36 @@ export async function updateRecipe(
   return { error: null };
 }
 
+function convertToGroceryUnit(amount: number, unit: RecipeUnit): { amount: number; unit: GroceryUnit } {
+  switch (unit) {
+    case "dl":    return { amount: amount * 100, unit: "ml" };
+    case "ss":    return { amount: amount * 15,  unit: "ml" };
+    case "ts":    return { amount: amount * 5,   unit: "ml" };
+    case "kopp":  return { amount: amount * 240, unit: "ml" };
+    case "klype": return { amount: amount,       unit: "stk" };
+    default:      return { amount, unit: unit as GroceryUnit };
+  }
+}
+
+export async function addRecipeToShoppingList(
+  ingredients: RecipeIngredientInput[]
+): Promise<{ error: string | null }> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Ikke autentisert." };
+
+  const rows = ingredients.map((ing) => {
+    const { amount, unit } = convertToGroceryUnit(ing.amount, ing.unit);
+    return { name: ing.name, category: ing.category, amount, unit, list_type: "shopping" as ListType };
+  });
+
+  const { error } = await supabase.from("groceries").insert(rows);
+  if (error) return { error: "Kunne ikke legge til ingredienser. Prøv igjen." };
+
+  revalidatePath("/dashboard");
+  return { error: null };
+}
+
 export async function deleteRecipe(formData: FormData) {
   const supabase = await createClient();
 

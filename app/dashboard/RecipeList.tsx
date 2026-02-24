@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import type { Recipe } from "@/lib/types";
-import { deleteRecipe } from "./actions";
+import { deleteRecipe, addRecipeToShoppingList } from "./actions";
 import EditRecipeForm from "./EditRecipeForm";
 
 function RecipeCard({ recipe }: { recipe: Recipe }) {
@@ -10,6 +10,25 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
   const [isEditing, setIsEditing] = useState(false);
   const [showIngredients, setShowIngredients] = useState(true);
   const [showInstructions, setShowInstructions] = useState(true);
+  const [isPending, startTransition] = useTransition();
+  const [addedMessage, setAddedMessage] = useState<string | null>(null);
+
+  function handleAddToShoppingList() {
+    startTransition(async () => {
+      const result = await addRecipeToShoppingList(
+        sortedIngredients.map((ing) => ({
+          name: ing.name,
+          amount: ing.amount,
+          unit: ing.unit,
+          category: ing.category,
+        }))
+      );
+      if (!result.error) {
+        setAddedMessage("Lagt til i handlelisten!");
+        setTimeout(() => setAddedMessage(null), 3000);
+      }
+    });
+  }
 
   const sortedIngredients = [...recipe.recipe_ingredients].sort(
     (a, b) => a.sort_order - b.sort_order
@@ -104,7 +123,18 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
                     Slett oppskrift
                   </button>
                 </form>
+                <button
+                  type="button"
+                  onClick={handleAddToShoppingList}
+                  disabled={isPending}
+                  className="text-xs text-green-600 hover:text-green-800 transition disabled:opacity-50"
+                >
+                  {isPending ? "Legger til..." : "Legg til i handleliste"}
+                </button>
               </div>
+              {addedMessage && (
+                <p className="text-xs text-green-600 mt-1">{addedMessage}</p>
+              )}
             </div>
           )}
         </div>
