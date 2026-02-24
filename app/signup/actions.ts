@@ -6,9 +6,22 @@ import { createClient } from "@/lib/supabase/server";
 
 export async function signup(formData: FormData) {
   const supabase = await createClient();
+  const email = (formData.get("email") as string).trim().toLowerCase();
+
+  const allowed = (process.env.ALLOWED_EMAILS ?? "")
+    .split(",")
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
+
+  if (!allowed.includes(email)) {
+    redirect(
+      "/signup?error=" +
+        encodeURIComponent("Denne e-postadressen har ikke tilgang.")
+    );
+  }
 
   const { error } = await supabase.auth.signUp({
-    email: formData.get("email") as string,
+    email,
     password: formData.get("password") as string,
   });
 
