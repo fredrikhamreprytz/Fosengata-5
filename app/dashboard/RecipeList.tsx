@@ -1,0 +1,130 @@
+"use client";
+
+import { useState } from "react";
+import type { Recipe } from "@/lib/types";
+import { deleteRecipe } from "./actions";
+import EditRecipeForm from "./EditRecipeForm";
+
+function RecipeCard({ recipe }: { recipe: Recipe }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [showIngredients, setShowIngredients] = useState(true);
+  const [showInstructions, setShowInstructions] = useState(true);
+
+  const sortedIngredients = [...recipe.recipe_ingredients].sort(
+    (a, b) => a.sort_order - b.sort_order
+  );
+  const sortedInstructions = [...recipe.recipe_instructions].sort(
+    (a, b) => a.step_order - b.step_order
+  );
+
+  return (
+    <div className="border border-gray-100 rounded-xl overflow-hidden">
+      <button
+        type="button"
+        onClick={() => {
+          setIsOpen((prev) => !prev);
+          setIsEditing(false);
+        }}
+        className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-gray-50 transition"
+      >
+        <span className="text-sm font-medium text-gray-800">{recipe.name}</span>
+        <span className="text-gray-400 text-xs">{isOpen ? "▲" : "▼"}</span>
+      </button>
+
+      {isOpen && (
+        <div className="px-4 pb-4 border-t border-gray-100 pt-3">
+          {isEditing ? (
+            <EditRecipeForm
+              recipe={recipe}
+              onDone={() => setIsEditing(false)}
+            />
+          ) : (
+            <div className="space-y-4">
+              {/* Ingredients section */}
+              <div>
+                <button
+                  type="button"
+                  onClick={() => setShowIngredients((prev) => !prev)}
+                  className="flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-gray-400 hover:text-gray-600 transition mb-2"
+                >
+                  Ingredienser
+                  <span className="text-gray-300">{showIngredients ? "▲" : "▼"}</span>
+                </button>
+                {showIngredients && (
+                  <ul className="space-y-1">
+                    {sortedIngredients.map((ing) => (
+                      <li key={ing.id} className="text-sm text-gray-700">
+                        {ing.name}{" "}
+                        <span className="text-gray-400">
+                          {ing.amount} {ing.unit}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+
+              {/* Instructions section */}
+              <div>
+                <button
+                  type="button"
+                  onClick={() => setShowInstructions((prev) => !prev)}
+                  className="flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-gray-400 hover:text-gray-600 transition mb-2"
+                >
+                  Fremgangsmåte
+                  <span className="text-gray-300">{showInstructions ? "▲" : "▼"}</span>
+                </button>
+                {showInstructions && (
+                  <ol className="space-y-2 list-decimal list-inside">
+                    {sortedInstructions.map((step) => (
+                      <li key={step.id} className="text-sm text-gray-700">
+                        {step.step_text}
+                      </li>
+                    ))}
+                  </ol>
+                )}
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-4">
+                <button
+                  type="button"
+                  onClick={() => setIsEditing(true)}
+                  className="text-xs text-gray-500 hover:text-gray-700 transition"
+                >
+                  Rediger
+                </button>
+                <form action={deleteRecipe}>
+                  <input type="hidden" name="id" value={recipe.id} />
+                  <button
+                    type="submit"
+                    className="text-xs text-red-500 hover:text-red-700 transition"
+                  >
+                    Slett oppskrift
+                  </button>
+                </form>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default function RecipeList({ recipes }: { recipes: Recipe[] }) {
+  if (recipes.length === 0) {
+    return (
+      <p className="text-gray-400 text-sm">Ingen oppskrifter lagt til ennå.</p>
+    );
+  }
+
+  return (
+    <div className="space-y-2">
+      {recipes.map((recipe) => (
+        <RecipeCard key={recipe.id} recipe={recipe} />
+      ))}
+    </div>
+  );
+}

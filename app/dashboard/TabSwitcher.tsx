@@ -1,14 +1,15 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import type { ListType } from "@/lib/types";
+import type { DashboardTab } from "@/lib/types";
 
-const TABS: { value: ListType; label: string }[] = [
+const TABS: { value: DashboardTab; label: string }[] = [
   { value: "shopping", label: "Handleliste" },
   { value: "inventory", label: "Beholdning" },
+  { value: "recipes", label: "Oppskrifter" },
 ];
 
-export default function TabSwitcher({ activeTab }: { activeTab: ListType }) {
+export default function TabSwitcher({ activeTab }: { activeTab: DashboardTab }) {
   const router = useRouter();
 
   return (
