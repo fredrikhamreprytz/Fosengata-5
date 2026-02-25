@@ -7,6 +7,7 @@ const TABS: { value: DashboardTab; label: string }[] = [
   { value: "shopping", label: "Handleliste" },
   { value: "inventory", label: "Beholdning" },
   { value: "recipes", label: "Oppskrifter" },
+  { value: "training", label: "Trening" },
 ];
 
 export default function TabSwitcher({ activeTab }: { activeTab: DashboardTab }) {

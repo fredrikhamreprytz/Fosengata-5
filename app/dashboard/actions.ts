@@ -255,3 +255,114 @@ export async function deleteRecipe(formData: FormData) {
   await supabase.from("recipes").delete().eq("id", id);
   revalidatePath("/dashboard");
 }
+
+interface RunningStepInput {
+  phase: "warmup" | "main" | "cooldown";
+  position: number;
+  is_recovery: boolean;
+  duration_seconds: number | null;
+  distance_km: number | null;
+  speed_kmh: number | null;
+  incline_pct: number | null;
+}
+
+export async function addRunningWorkout(payload: {
+  name: string;
+  steps: RunningStepInput[];
+}): Promise<{ error: string | null }> {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Ikke autentisert." };
+
+  const name = payload.name.trim();
+  if (!name) return { error: "Navn på økt er påkrevd." };
+  if (payload.steps.length === 0) return { error: "Minst ett steg er påkrevd." };
+
+  const { data: workout, error: workoutError } = await supabase
+    .from("running_workouts")
+    .insert({ name, user_id: user.id })
+    .select("id")
+    .single();
+
+  if (workoutError || !workout) return { error: "Kunne ikke lagre økt. Prøv igjen." };
+
+  const { error: stepsError } = await supabase.from("running_workout_steps").insert(
+    payload.steps.map((s) => ({
+      workout_id: workout.id,
+      phase: s.phase,
+      position: s.position,
+      is_recovery: s.is_recovery,
+      duration_seconds: s.duration_seconds,
+      distance_km: s.distance_km,
+      speed_kmh: s.speed_kmh,
+      incline_pct: s.incline_pct,
+    }))
+  );
+
+  if (stepsError) return { error: "Kunne ikke lagre steg. Prøv igjen." };
+
+  revalidatePath("/dashboard");
+  return { error: null };
+}
+
+export async function updateRunningWorkout(
+  id: string,
+  payload: { name: string; steps: RunningStepInput[] }
+): Promise<{ error: string | null }> {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Ikke autentisert." };
+
+  const name = payload.name.trim();
+  if (!name) return { error: "Navn på økt er påkrevd." };
+  if (payload.steps.length === 0) return { error: "Minst ett steg er påkrevd." };
+
+  const { error: nameError } = await supabase
+    .from("running_workouts")
+    .update({ name })
+    .eq("id", id)
+    .eq("user_id", user.id);
+
+  if (nameError) return { error: "Kunne ikke oppdatere økt. Prøv igjen." };
+
+  await supabase.from("running_workout_steps").delete().eq("workout_id", id);
+
+  const { error: stepsError } = await supabase.from("running_workout_steps").insert(
+    payload.steps.map((s) => ({
+      workout_id: id,
+      phase: s.phase,
+      position: s.position,
+      is_recovery: s.is_recovery,
+      duration_seconds: s.duration_seconds,
+      distance_km: s.distance_km,
+      speed_kmh: s.speed_kmh,
+      incline_pct: s.incline_pct,
+    }))
+  );
+
+  if (stepsError) return { error: "Kunne ikke lagre steg. Prøv igjen." };
+
+  revalidatePath("/dashboard");
+  return { error: null };
+}
+
+export async function deleteRunningWorkout(formData: FormData) {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return;
+
+  const id = formData.get("id") as string | null;
+  if (!id) return;
+
+  await supabase.from("running_workouts").delete().eq("id", id);
+  revalidatePath("/dashboard");
+}

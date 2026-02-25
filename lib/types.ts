@@ -56,7 +56,29 @@ export interface Grocery {
   created_at: string;
 }
 
-export type DashboardTab = "shopping" | "inventory" | "recipes";
+export type DashboardTab = "shopping" | "inventory" | "recipes" | "training";
+
+export type RunningPhase = "warmup" | "main" | "cooldown";
+
+export interface RunningStep {
+  id: string;
+  workout_id: string;
+  phase: RunningPhase;
+  position: number;
+  is_recovery: boolean;
+  duration_seconds: number | null;
+  distance_km: number | null;
+  speed_kmh: number | null;
+  incline_pct: number | null;
+}
+
+export interface RunningWorkout {
+  id: string;
+  user_id: string;
+  name: string;
+  created_at: string;
+  running_workout_steps: RunningStep[];
+}
 
 export interface RecipeIngredientInput {
   name: string;

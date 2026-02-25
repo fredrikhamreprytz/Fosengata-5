@@ -1,13 +1,15 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { GROCERY_CATEGORIES } from "@/lib/types";
-import type { Grocery, ListType, DashboardTab, Recipe } from "@/lib/types";
+import type { Grocery, ListType, DashboardTab, Recipe, RunningWorkout } from "@/lib/types";
 import { deleteGrocery, deleteRecipe } from "./actions";
 import AddGroceryForm from "./AddGroceryForm";
 import AddRecipeForm from "./AddRecipeForm";
 import Header from "./Header";
 import RecipeList from "./RecipeList";
 import TabSwitcher from "./TabSwitcher";
+import AddRunningWorkoutForm from "./training/AddRunningWorkoutForm";
+import RunningWorkoutList from "./training/RunningWorkoutList";
 
 function isGroceryTab(t: DashboardTab): t is ListType {
   return t === "shopping" || t === "inventory";
@@ -27,12 +29,13 @@ export default async function Dashboard({
 
   const { tab } = await searchParams;
   const activeTab: DashboardTab =
-    tab === "shopping" || tab === "inventory" || tab === "recipes"
+    tab === "shopping" || tab === "inventory" || tab === "recipes" || tab === "training"
       ? tab
       : "shopping";
 
   let groceries: Grocery[] = [];
   let recipes: Recipe[] = [];
+  let runningWorkouts: RunningWorkout[] = [];
 
   if (isGroceryTab(activeTab)) {
     const { data } = await supabase
@@ -41,12 +44,19 @@ export default async function Dashboard({
       .eq("list_type", activeTab)
       .order("created_at", { ascending: false });
     groceries = data ?? [];
-  } else {
+  } else if (activeTab === "recipes") {
     const { data } = await supabase
       .from("recipes")
       .select("*, recipe_ingredients(*), recipe_instructions(*)")
       .order("created_at", { ascending: false });
     recipes = data ?? [];
+  } else if (activeTab === "training") {
+    const { data } = await supabase
+      .from("running_workouts")
+      .select("*, running_workout_steps(*)")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
+    runningWorkouts = data ?? [];
   }
 
   const grouped = GROCERY_CATEGORIES.map((cat) => ({
@@ -118,7 +128,7 @@ export default async function Dashboard({
               )}
             </div>
           </>
-        ) : (
+        ) : activeTab === "recipes" ? (
           <>
             {/* Add recipe card */}
             <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
@@ -130,6 +140,20 @@ export default async function Dashboard({
             <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
               <h2 className="text-lg font-semibold text-gray-700">Oppskrifter</h2>
               <RecipeList recipes={recipes} />
+            </div>
+          </>
+        ) : (
+          <>
+            {/* Add running workout card */}
+            <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
+              <h2 className="text-lg font-semibold text-gray-700">Legg til løpeøkt</h2>
+              <AddRunningWorkoutForm />
+            </div>
+
+            {/* Running workout list card */}
+            <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
+              <h2 className="text-lg font-semibold text-gray-700">Løpeøkter</h2>
+              <RunningWorkoutList workouts={runningWorkouts} />
             </div>
           </>
         )}

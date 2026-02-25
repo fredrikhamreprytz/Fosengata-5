@@ -5,6 +5,10 @@
 - Code (variable names, function names, comments, etc.) must be written in **English**
 - All user-facing text in the application (labels, buttons, messages, etc.) must be written in **Norwegian**
 
+## SQL
+
+When providing SQL to run (e.g. in Supabase), always present it as a clean code block with no markdown table characters (`│`, `|`, etc.) or other formatting artifacts — only valid SQL syntax.
+
 ## Commit Messages
 
 Format: `[Fosengata 5] - short summary of changes`
