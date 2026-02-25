@@ -37,6 +37,7 @@ export default async function Dashboard({
   let groceries: Grocery[] = [];
   let recipes: Recipe[] = [];
   let runningWorkouts: RunningWorkout[] = [];
+  let inventoryNames = new Set<string>();
 
   if (isGroceryTab(activeTab)) {
     const { data } = await supabase
@@ -46,11 +47,19 @@ export default async function Dashboard({
       .order("created_at", { ascending: false });
     groceries = data ?? [];
   } else if (activeTab === "recipes") {
-    const { data } = await supabase
-      .from("recipes")
-      .select("*, recipe_ingredients(*), recipe_instructions(*)")
-      .order("created_at", { ascending: false });
-    recipes = data ?? [];
+    const [recipesResult, inventoryResult] = await Promise.all([
+      supabase
+        .from("recipes")
+        .select("*, recipe_ingredients(*), recipe_instructions(*)")
+        .order("created_at", { ascending: false }),
+      supabase.from("groceries").select("name").eq("list_type", "inventory"),
+    ]);
+    recipes = recipesResult.data ?? [];
+    inventoryNames = new Set(
+      (inventoryResult.data ?? []).map((g: { name: string }) =>
+        g.name.toLowerCase().trim()
+      )
+    );
   } else if (activeTab === "training") {
     const { data } = await supabase
       .from("running_workouts")
@@ -141,7 +150,7 @@ export default async function Dashboard({
             {/* Recipe list card */}
             <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
               <h2 className="text-lg font-semibold text-gray-700">Oppskrifter</h2>
-              <RecipeList recipes={recipes} />
+              <RecipeList recipes={recipes} inventoryNames={inventoryNames} />
             </div>
           </>
         ) : (

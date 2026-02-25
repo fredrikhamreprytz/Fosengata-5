@@ -6,7 +6,13 @@ import { GROCERY_CATEGORIES } from "@/lib/types";
 import { deleteRecipe, addRecipeToShoppingList } from "./actions";
 import EditRecipeForm from "./EditRecipeForm";
 
-function RecipeCard({ recipe }: { recipe: Recipe }) {
+function RecipeCard({
+  recipe,
+  inventoryNames,
+}: {
+  recipe: Recipe;
+  inventoryNames: Set<string>;
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [showIngredients, setShowIngredients] = useState(true);
@@ -84,14 +90,24 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
                           {cat.label}
                         </h4>
                         <ul className="space-y-1">
-                          {cat.items.map((ing) => (
-                            <li key={ing.id} className="text-sm text-gray-700">
-                              {ing.name}{" "}
-                              <span className="text-gray-400">
-                                {ing.amount} {ing.unit}
-                              </span>
-                            </li>
-                          ))}
+                          {cat.items.map((ing) => {
+                            const inInventory = inventoryNames.has(
+                              ing.name.toLowerCase().trim()
+                            );
+                            return (
+                              <li key={ing.id} className="text-sm text-gray-700">
+                                {ing.name}{" "}
+                                <span className="text-gray-400">
+                                  {ing.amount} {ing.unit}
+                                </span>
+                                {inInventory && (
+                                  <span className="ml-1 text-xs text-green-500">
+                                    ✓ i beholdning
+                                  </span>
+                                )}
+                              </li>
+                            );
+                          })}
                         </ul>
                       </div>
                     ))}
@@ -158,7 +174,13 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
   );
 }
 
-export default function RecipeList({ recipes }: { recipes: Recipe[] }) {
+export default function RecipeList({
+  recipes,
+  inventoryNames,
+}: {
+  recipes: Recipe[];
+  inventoryNames: Set<string>;
+}) {
   if (recipes.length === 0) {
     return (
       <p className="text-gray-400 text-sm">Ingen oppskrifter lagt til ennå.</p>
@@ -168,7 +190,7 @@ export default function RecipeList({ recipes }: { recipes: Recipe[] }) {
   return (
     <div className="space-y-2">
       {recipes.map((recipe) => (
-        <RecipeCard key={recipe.id} recipe={recipe} />
+        <RecipeCard key={recipe.id} recipe={recipe} inventoryNames={inventoryNames} />
       ))}
     </div>
   );
