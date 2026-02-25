@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import type { Recipe } from "@/lib/types";
+import { GROCERY_CATEGORIES } from "@/lib/types";
 import { deleteRecipe, addRecipeToShoppingList } from "./actions";
 import EditRecipeForm from "./EditRecipeForm";
 
@@ -37,6 +38,11 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
     (a, b) => a.step_order - b.step_order
   );
 
+  const groupedIngredients = GROCERY_CATEGORIES.map((cat) => ({
+    ...cat,
+    items: sortedIngredients.filter((ing) => ing.category === cat.value),
+  })).filter((cat) => cat.items.length > 0);
+
   return (
     <div className="border border-gray-100 rounded-xl overflow-hidden">
       <button
@@ -71,16 +77,25 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
                   <span className="text-gray-300">{showIngredients ? "▲" : "▼"}</span>
                 </button>
                 {showIngredients && (
-                  <ul className="space-y-1">
-                    {sortedIngredients.map((ing) => (
-                      <li key={ing.id} className="text-sm text-gray-700">
-                        {ing.name}{" "}
-                        <span className="text-gray-400">
-                          {ing.amount} {ing.unit}
-                        </span>
-                      </li>
+                  <div className="space-y-3">
+                    {groupedIngredients.map((cat) => (
+                      <div key={cat.value}>
+                        <h4 className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-1">
+                          {cat.label}
+                        </h4>
+                        <ul className="space-y-1">
+                          {cat.items.map((ing) => (
+                            <li key={ing.id} className="text-sm text-gray-700">
+                              {ing.name}{" "}
+                              <span className="text-gray-400">
+                                {ing.amount} {ing.unit}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                 )}
               </div>
 
