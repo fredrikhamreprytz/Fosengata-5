@@ -67,6 +67,14 @@ export async function addGrocery(
   return { error: null };
 }
 
+export async function clearShoppingList() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+  await supabase.from("groceries").delete().eq("list_type", "shopping");
+  revalidatePath("/dashboard");
+}
+
 export async function deleteGrocery(formData: FormData) {
   const supabase = await createClient();
 
