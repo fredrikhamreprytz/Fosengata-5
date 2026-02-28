@@ -374,3 +374,110 @@ export async function deleteRunningWorkout(formData: FormData) {
   await supabase.from("running_workouts").delete().eq("id", id);
   revalidatePath("/dashboard");
 }
+
+interface StrengthExerciseInput {
+  exercise_name: string;
+  sets: number;
+  reps: number;
+  weight_kg: number;
+  label: "too_hard" | "ok" | "increase";
+}
+
+export async function addStrengthWorkout(payload: {
+  name: string;
+  exercises: StrengthExerciseInput[];
+}): Promise<{ error: string | null }> {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Ikke autentisert." };
+
+  const name = payload.name.trim();
+  if (!name) return { error: "Navn på økt er påkrevd." };
+  if (payload.exercises.length === 0) return { error: "Minst én øvelse er påkrevd." };
+
+  const { data: workout, error: workoutError } = await supabase
+    .from("strength_workouts")
+    .insert({ name, user_id: user.id })
+    .select("id")
+    .single();
+
+  if (workoutError || !workout) return { error: "Kunne ikke lagre økt. Prøv igjen." };
+
+  const { error: exercisesError } = await supabase.from("strength_exercises").insert(
+    payload.exercises.map((ex, i) => ({
+      workout_id: workout.id,
+      exercise_name: ex.exercise_name,
+      sets: ex.sets,
+      reps: ex.reps,
+      weight_kg: ex.weight_kg,
+      label: ex.label,
+      sort_order: i,
+    }))
+  );
+
+  if (exercisesError) return { error: "Kunne ikke lagre øvelser. Prøv igjen." };
+
+  revalidatePath("/dashboard");
+  return { error: null };
+}
+
+export async function updateStrengthWorkout(
+  id: string,
+  payload: { name: string; exercises: StrengthExerciseInput[] }
+): Promise<{ error: string | null }> {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Ikke autentisert." };
+
+  const name = payload.name.trim();
+  if (!name) return { error: "Navn på økt er påkrevd." };
+  if (payload.exercises.length === 0) return { error: "Minst én øvelse er påkrevd." };
+
+  const { error: nameError } = await supabase
+    .from("strength_workouts")
+    .update({ name })
+    .eq("id", id)
+    .eq("user_id", user.id);
+
+  if (nameError) return { error: "Kunne ikke oppdatere økt. Prøv igjen." };
+
+  await supabase.from("strength_exercises").delete().eq("workout_id", id);
+
+  const { error: exercisesError } = await supabase.from("strength_exercises").insert(
+    payload.exercises.map((ex, i) => ({
+      workout_id: id,
+      exercise_name: ex.exercise_name,
+      sets: ex.sets,
+      reps: ex.reps,
+      weight_kg: ex.weight_kg,
+      label: ex.label,
+      sort_order: i,
+    }))
+  );
+
+  if (exercisesError) return { error: "Kunne ikke lagre øvelser. Prøv igjen." };
+
+  revalidatePath("/dashboard");
+  return { error: null };
+}
+
+export async function deleteStrengthWorkout(formData: FormData) {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return;
+
+  const id = formData.get("id") as string | null;
+  if (!id) return;
+
+  await supabase.from("strength_workouts").delete().eq("id", id);
+  revalidatePath("/dashboard");
+}

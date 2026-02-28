@@ -79,7 +79,7 @@ export default function AddGroceryForm({ listType }: { listType: ListType }) {
       <button
         type="submit"
         disabled={isPending}
-        className="px-5 py-2 bg-gray-800 text-white text-sm rounded-lg hover:bg-gray-700 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full sm:w-auto px-5 py-2 bg-gray-800 text-white text-sm rounded-lg hover:bg-gray-700 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isPending ? "Legger til..." : "Legg til"}
       </button>

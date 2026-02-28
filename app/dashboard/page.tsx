@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { GROCERY_CATEGORIES } from "@/lib/types";
-import type { Grocery, ListType, DashboardTab, Recipe, RunningWorkout } from "@/lib/types";
+import type { Grocery, ListType, DashboardTab, Recipe, RunningWorkout, StrengthWorkout, TrainingSubTab } from "@/lib/types";
 import { deleteGrocery } from "./actions";
 import AddGroceryForm from "./AddGroceryForm";
 import AddRecipeForm from "./AddRecipeForm";
@@ -11,6 +11,9 @@ import ShoppingList from "./ShoppingList";
 import TabSwitcher from "./TabSwitcher";
 import AddRunningWorkoutForm from "./training/AddRunningWorkoutForm";
 import RunningWorkoutList from "./training/RunningWorkoutList";
+import TrainingSubSwitcher from "./training/TrainingSubSwitcher";
+import AddStrengthWorkoutForm from "./training/AddStrengthWorkoutForm";
+import StrengthWorkoutList from "./training/StrengthWorkoutList";
 
 function isGroceryTab(t: DashboardTab): t is ListType {
   return t === "shopping" || t === "inventory";
@@ -19,7 +22,7 @@ function isGroceryTab(t: DashboardTab): t is ListType {
 export default async function Dashboard({
   searchParams,
 }: {
-  searchParams: Promise<{ tab?: string }>;
+  searchParams: Promise<{ tab?: string; subtab?: string }>;
 }) {
   const supabase = await createClient();
 
@@ -28,15 +31,18 @@ export default async function Dashboard({
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const { tab } = await searchParams;
+  const { tab, subtab } = await searchParams;
   const activeTab: DashboardTab =
     tab === "shopping" || tab === "inventory" || tab === "recipes" || tab === "training"
       ? tab
       : "shopping";
 
+  const trainingSubTab: TrainingSubTab = subtab === "strength" ? "strength" : "running";
+
   let groceries: Grocery[] = [];
   let recipes: Recipe[] = [];
   let runningWorkouts: RunningWorkout[] = [];
+  let strengthWorkouts: StrengthWorkout[] = [];
   let inventoryNames = new Set<string>();
 
   if (isGroceryTab(activeTab)) {
@@ -61,12 +67,21 @@ export default async function Dashboard({
       )
     );
   } else if (activeTab === "training") {
-    const { data } = await supabase
-      .from("running_workouts")
-      .select("*, running_workout_steps(*)")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false });
-    runningWorkouts = data ?? [];
+    if (trainingSubTab === "running") {
+      const { data } = await supabase
+        .from("running_workouts")
+        .select("*, running_workout_steps(*)")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false });
+      runningWorkouts = data ?? [];
+    } else {
+      const { data } = await supabase
+        .from("strength_workouts")
+        .select("*, strength_exercises(*)")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false });
+      strengthWorkouts = data ?? [];
+    }
   }
 
   const grouped = GROCERY_CATEGORIES.map((cat) => ({
@@ -75,7 +90,7 @@ export default async function Dashboard({
   })).filter((cat) => cat.items.length > 0);
 
   return (
-    <main className="min-h-screen bg-gray-50 p-6">
+    <main className="min-h-screen bg-gray-50 p-3 sm:p-6">
       <div className="max-w-3xl mx-auto space-y-6">
         {/* Header */}
         <Header />
@@ -86,13 +101,13 @@ export default async function Dashboard({
         {isGroceryTab(activeTab) ? (
           <>
             {/* Add grocery card */}
-            <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
+            <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 space-y-4">
               <h2 className="text-lg font-semibold text-gray-700">Legg til vare</h2>
               <AddGroceryForm listType={activeTab} />
             </div>
 
             {/* Grocery list card */}
-            <div className="bg-white rounded-2xl shadow-sm p-6 space-y-6">
+            <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 space-y-6">
               {activeTab === "shopping" ? (
                 <ShoppingList groceries={groceries} />
               ) : (
@@ -142,30 +157,51 @@ export default async function Dashboard({
         ) : activeTab === "recipes" ? (
           <>
             {/* Add recipe card */}
-            <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
+            <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 space-y-4">
               <h2 className="text-lg font-semibold text-gray-700">Legg til oppskrift</h2>
               <AddRecipeForm />
             </div>
 
             {/* Recipe list card */}
-            <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
+            <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 space-y-4">
               <h2 className="text-lg font-semibold text-gray-700">Oppskrifter</h2>
               <RecipeList recipes={recipes} inventoryNames={inventoryNames} />
             </div>
           </>
         ) : (
           <>
-            {/* Add running workout card */}
-            <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
-              <h2 className="text-lg font-semibold text-gray-700">Legg til løpeøkt</h2>
-              <AddRunningWorkoutForm />
-            </div>
+            {/* Training sub-tab switcher */}
+            <TrainingSubSwitcher activeSubTab={trainingSubTab} />
 
-            {/* Running workout list card */}
-            <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
-              <h2 className="text-lg font-semibold text-gray-700">Løpeøkter</h2>
-              <RunningWorkoutList workouts={runningWorkouts} />
-            </div>
+            {trainingSubTab === "running" ? (
+              <>
+                {/* Add running workout card */}
+                <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 space-y-4">
+                  <h2 className="text-lg font-semibold text-gray-700">Legg til løpeøkt</h2>
+                  <AddRunningWorkoutForm />
+                </div>
+
+                {/* Running workout list card */}
+                <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 space-y-4">
+                  <h2 className="text-lg font-semibold text-gray-700">Løpeøkter</h2>
+                  <RunningWorkoutList workouts={runningWorkouts} />
+                </div>
+              </>
+            ) : (
+              <>
+                {/* Add strength workout card */}
+                <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 space-y-4">
+                  <h2 className="text-lg font-semibold text-gray-700">Legg til styrkeøkt</h2>
+                  <AddStrengthWorkoutForm />
+                </div>
+
+                {/* Strength workout list card */}
+                <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 space-y-4">
+                  <h2 className="text-lg font-semibold text-gray-700">Styrkeøkter</h2>
+                  <StrengthWorkoutList workouts={strengthWorkouts} />
+                </div>
+              </>
+            )}
           </>
         )}
       </div>

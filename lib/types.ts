@@ -58,6 +58,28 @@ export interface Grocery {
 
 export type DashboardTab = "shopping" | "inventory" | "recipes" | "training";
 
+export type StrengthLabel = "too_hard" | "ok" | "increase";
+export type TrainingSubTab = "running" | "strength";
+
+export interface StrengthExercise {
+  id: string;
+  workout_id: string;
+  exercise_name: string;
+  sets: number;
+  reps: number;
+  weight_kg: number;
+  label: StrengthLabel;
+  sort_order: number;
+}
+
+export interface StrengthWorkout {
+  id: string;
+  user_id: string;
+  name: string;
+  created_at: string;
+  strength_exercises: StrengthExercise[];
+}
+
 export type RunningPhase = "warmup" | "main" | "cooldown";
 
 export interface RunningStep {

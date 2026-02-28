@@ -106,49 +106,53 @@ export default function EditRecipeForm({
       <div className="space-y-3">
         <h3 className="text-sm font-semibold text-gray-600">Ingredienser</h3>
         {ingredients.map((ing) => (
-          <div key={ing.key} className="flex gap-2 items-start flex-wrap">
-            <input
-              type="text"
-              value={ing.name}
-              onChange={(e) => updateIngredient(ing.key, { name: e.target.value })}
-              placeholder="Navn"
-              className="flex-1 min-w-24 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400"
-            />
-            <input
-              type="number"
-              value={ing.amount}
-              onChange={(e) => updateIngredient(ing.key, { amount: e.target.value })}
-              placeholder="Antall"
-              min="0"
-              step="any"
-              className="w-20 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400"
-            />
-            <select
-              value={ing.unit}
-              onChange={(e) => updateIngredient(ing.key, { unit: e.target.value as RecipeUnit })}
-              className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400"
-            >
-              {RECIPE_UNITS.map((u) => (
-                <option key={u.value} value={u.value}>{u.label}</option>
-              ))}
-            </select>
-            <select
-              value={ing.category}
-              onChange={(e) => updateIngredient(ing.key, { category: e.target.value as GroceryCategory })}
-              className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400"
-            >
-              {GROCERY_CATEGORIES.map((c) => (
-                <option key={c.value} value={c.value}>{c.label}</option>
-              ))}
-            </select>
-            <button
-              type="button"
-              onClick={() => removeIngredient(ing.key)}
-              className="px-2 py-2 text-gray-400 hover:text-red-500 transition text-lg leading-none"
-              aria-label="Fjern ingrediens"
-            >
-              ×
-            </button>
+          <div key={ing.key} className="space-y-2">
+            <div className="flex gap-2 items-center">
+              <input
+                type="text"
+                value={ing.name}
+                onChange={(e) => updateIngredient(ing.key, { name: e.target.value })}
+                placeholder="Navn"
+                className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400"
+              />
+              <button
+                type="button"
+                onClick={() => removeIngredient(ing.key)}
+                className="px-2 py-2 text-gray-400 hover:text-red-500 transition text-lg leading-none"
+                aria-label="Fjern ingrediens"
+              >
+                ×
+              </button>
+            </div>
+            <div className="flex gap-2 items-center">
+              <input
+                type="number"
+                value={ing.amount}
+                onChange={(e) => updateIngredient(ing.key, { amount: e.target.value })}
+                placeholder="Antall"
+                min="0"
+                step="any"
+                className="w-20 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400"
+              />
+              <select
+                value={ing.unit}
+                onChange={(e) => updateIngredient(ing.key, { unit: e.target.value as RecipeUnit })}
+                className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400"
+              >
+                {RECIPE_UNITS.map((u) => (
+                  <option key={u.value} value={u.value}>{u.label}</option>
+                ))}
+              </select>
+              <select
+                value={ing.category}
+                onChange={(e) => updateIngredient(ing.key, { category: e.target.value as GroceryCategory })}
+                className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400"
+              >
+                {GROCERY_CATEGORIES.map((c) => (
+                  <option key={c.value} value={c.value}>{c.label}</option>
+                ))}
+              </select>
+            </div>
           </div>
         ))}
         <button

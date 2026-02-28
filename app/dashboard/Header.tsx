@@ -10,9 +10,9 @@ export default function Header() {
           alt="Fosengata 5 logo"
           width={80}
           height={80}
-          className="rounded-full object-cover"
+          className="rounded-full object-contain w-12 h-12 sm:w-20 sm:h-20"
         />
-        <h1 className="text-2xl font-bold text-gray-800">Fosengata 5</h1>
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Fosengata 5</h1>
       </div>
       <form action={signOut}>
         <button

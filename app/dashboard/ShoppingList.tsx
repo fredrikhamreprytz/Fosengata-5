@@ -36,7 +36,7 @@ export default function ShoppingList({ groceries }: { groceries: Grocery[] }) {
   return (
     <div className="space-y-4">
       {/* Header row */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-y-2">
         <div className="flex items-center gap-2">
           <h2 className="text-lg font-semibold text-gray-700">Handleliste</h2>
           <span
