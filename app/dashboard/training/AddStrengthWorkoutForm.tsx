@@ -33,10 +33,10 @@ const LABEL_OPTIONS: { value: StrengthLabel; label: string }[] = [
 ];
 
 function labelButtonClass(value: StrengthLabel, active: boolean): string {
-  if (!active) return "border border-gray-200 text-gray-500 hover:border-gray-300 transition";
+  if (!active) return "border border-slate-200 text-slate-500 hover:border-slate-300 transition";
   if (value === "too_hard") return "border border-red-300 bg-red-50 text-red-700";
   if (value === "increase") return "border border-green-300 bg-green-50 text-green-700";
-  return "border border-gray-300 bg-gray-100 text-gray-700";
+  return "border border-slate-300 bg-slate-100 text-slate-700";
 }
 
 function ExerciseRow({
@@ -51,7 +51,7 @@ function ExerciseRow({
   onRemove: () => void;
 }) {
   const inputClass =
-    "border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400";
+    "border border-slate-300 rounded-lg px-2 py-1.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500";
 
   return (
     <div className="space-y-2">
@@ -69,7 +69,7 @@ function ExerciseRow({
           onClick={onRemove}
           disabled={!removable}
           className={`text-lg leading-none transition ${
-            removable ? "text-gray-400 hover:text-red-500" : "invisible"
+            removable ? "text-slate-400 hover:text-red-500" : "invisible"
           }`}
           aria-label="Fjern øvelse"
         >
@@ -86,7 +86,7 @@ function ExerciseRow({
           min="1"
           className={`w-14 ${inputClass}`}
         />
-        <span className="text-xs text-gray-400">sett</span>
+        <span className="text-xs text-slate-400">sett</span>
         <input
           type="number"
           value={exercise.reps}
@@ -95,7 +95,7 @@ function ExerciseRow({
           min="1"
           className={`w-14 ${inputClass}`}
         />
-        <span className="text-xs text-gray-400">reps</span>
+        <span className="text-xs text-slate-400">reps</span>
         <input
           type="text"
           inputMode="decimal"
@@ -104,7 +104,7 @@ function ExerciseRow({
           placeholder="0"
           className={`w-14 ${inputClass}`}
         />
-        <span className="text-xs text-gray-400">kg</span>
+        <span className="text-xs text-slate-400">kg</span>
       </div>
       {/* Row 2b: label buttons */}
       <div className="flex gap-1">
@@ -207,10 +207,10 @@ export default function AddStrengthWorkoutForm() {
         value={name}
         onChange={(e) => setName(e.target.value)}
         placeholder="Navn på økt"
-        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400"
+        className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
       />
 
-      <div className="space-y-4 pl-3 border-l-2 border-gray-100">
+      <div className="space-y-4 pl-3 border-l-2 border-emerald-100">
         {exercises.map((ex) => (
           <ExerciseRow
             key={ex.key}
@@ -223,7 +223,7 @@ export default function AddStrengthWorkoutForm() {
         <button
           type="button"
           onClick={addExercise}
-          className="text-sm text-gray-500 hover:text-gray-700 transition underline"
+          className="text-sm text-slate-500 hover:text-slate-700 transition underline"
         >
           Legg til øvelse
         </button>
@@ -234,7 +234,7 @@ export default function AddStrengthWorkoutForm() {
       <button
         type="submit"
         disabled={isPending}
-        className="px-4 py-2 bg-gray-800 text-white text-sm rounded-lg hover:bg-gray-700 transition font-medium disabled:opacity-50"
+        className="px-4 py-2 bg-emerald-600 text-white text-sm rounded-lg hover:bg-emerald-700 transition font-medium disabled:opacity-50"
       >
         {isPending ? "Lagrer..." : "Lagre økt"}
       </button>

@@ -90,7 +90,7 @@ function StepFields({
   removable: boolean;
 }) {
   const inputClass =
-    "border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400";
+    "border border-slate-300 rounded-lg px-2 py-1.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500";
 
   function handleSpeedChange(value: string) {
     const num = parseFloat(value);
@@ -127,7 +127,7 @@ function StepFields({
           <button
             type="button"
             onClick={onDuplicate}
-            className="text-xs text-gray-400 hover:text-gray-600 transition"
+            className="text-xs text-slate-400 hover:text-slate-600 transition"
             aria-label="Dupliser steg"
           >
             Dupliser
@@ -136,7 +136,7 @@ function StepFields({
             <button
               type="button"
               onClick={onRemove}
-              className="text-gray-400 hover:text-red-500 transition text-lg leading-none"
+              className="text-slate-400 hover:text-red-500 transition text-lg leading-none"
               aria-label="Fjern steg"
             >
               ×
@@ -154,7 +154,7 @@ function StepFields({
             min="0"
             className={`w-14 ${inputClass}`}
           />
-          <span className="text-xs text-gray-500">min</span>
+          <span className="text-xs text-slate-500">min</span>
           <input
             type="number"
             value={step.duration_seconds}
@@ -164,7 +164,7 @@ function StepFields({
             max="59"
             className={`w-14 ${inputClass}`}
           />
-          <span className="text-xs text-gray-500">sek</span>
+          <span className="text-xs text-slate-500">sek</span>
         </div>
         <div className="flex items-center gap-1">
           <input
@@ -176,7 +176,7 @@ function StepFields({
             step="0.01"
             className={`w-16 ${inputClass}`}
           />
-          <span className="text-xs text-gray-500">km</span>
+          <span className="text-xs text-slate-500">km</span>
         </div>
         <div className="flex items-center gap-1">
           <input
@@ -188,7 +188,7 @@ function StepFields({
             step="0.1"
             className={`w-16 ${inputClass}`}
           />
-          <span className="text-xs text-gray-500">km/t</span>
+          <span className="text-xs text-slate-500">km/t</span>
         </div>
         <div className="flex items-center gap-1">
           <input
@@ -199,7 +199,7 @@ function StepFields({
             min="0"
             className={`w-12 ${inputClass}`}
           />
-          <span className="text-xs text-gray-500">:</span>
+          <span className="text-xs text-slate-500">:</span>
           <input
             type="number"
             value={step.pace_sec}
@@ -209,7 +209,7 @@ function StepFields({
             max="59"
             className={`w-12 ${inputClass}`}
           />
-          <span className="text-xs text-gray-500">min/km</span>
+          <span className="text-xs text-slate-500">min/km</span>
         </div>
         <div className="flex items-center gap-1">
           <input
@@ -221,7 +221,7 @@ function StepFields({
             step="0.5"
             className={`w-14 ${inputClass}`}
           />
-          <span className="text-xs text-gray-500">%</span>
+          <span className="text-xs text-slate-500">%</span>
         </div>
       </div>
     </div>
@@ -387,23 +387,23 @@ export default function EditRunningWorkoutForm({
         value={name}
         onChange={(e) => setName(e.target.value)}
         placeholder="Navn på økt"
-        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400"
+        className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
       />
 
       {/* Warmup */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-gray-600">Oppvarming</h3>
+          <h3 className="text-sm font-semibold text-slate-600">Oppvarming</h3>
           <button
             type="button"
             onClick={toggleWarmup}
-            className="text-xs text-gray-500 hover:text-gray-700 transition underline"
+            className="text-xs text-slate-500 hover:text-slate-700 transition underline"
           >
             {showWarmup ? "Fjern oppvarming" : "Legg til oppvarming"}
           </button>
         </div>
         {showWarmup && (
-          <div className="space-y-3 pl-3 border-l-2 border-gray-100">
+          <div className="space-y-3 pl-3 border-l-2 border-slate-100">
             {warmupSteps.map((step) => (
               <StepFields
                 key={step.key}
@@ -418,7 +418,7 @@ export default function EditRunningWorkoutForm({
             <button
               type="button"
               onClick={() => setWarmupSteps((prev) => [...prev, makeStep("warmup")])}
-              className="text-xs text-gray-500 hover:text-gray-700 transition underline"
+              className="text-xs text-slate-500 hover:text-slate-700 transition underline"
             >
               Legg til steg
             </button>
@@ -428,9 +428,9 @@ export default function EditRunningWorkoutForm({
 
       {/* Main */}
       <div className="space-y-3">
-        <h3 className="text-sm font-semibold text-gray-600">Hovedøkt</h3>
+        <h3 className="text-sm font-semibold text-slate-600">Hovedøkt</h3>
         {mainSteps.length > 0 && (
-          <div className="space-y-3 pl-3 border-l-2 border-gray-100">
+          <div className="space-y-3 pl-3 border-l-2 border-slate-100">
             {mainSteps.map((step) => (
               <StepFields
                 key={step.key}
@@ -447,7 +447,7 @@ export default function EditRunningWorkoutForm({
         <button
           type="button"
           onClick={addInterval}
-          className="text-sm text-gray-500 hover:text-gray-700 transition underline"
+          className="text-sm text-slate-500 hover:text-slate-700 transition underline"
         >
           Legg til intervall
         </button>
@@ -456,17 +456,17 @@ export default function EditRunningWorkoutForm({
       {/* Cooldown */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-gray-600">Nedkjøling</h3>
+          <h3 className="text-sm font-semibold text-slate-600">Nedkjøling</h3>
           <button
             type="button"
             onClick={toggleCooldown}
-            className="text-xs text-gray-500 hover:text-gray-700 transition underline"
+            className="text-xs text-slate-500 hover:text-slate-700 transition underline"
           >
             {showCooldown ? "Fjern nedkjøling" : "Legg til nedkjøling"}
           </button>
         </div>
         {showCooldown && (
-          <div className="space-y-3 pl-3 border-l-2 border-gray-100">
+          <div className="space-y-3 pl-3 border-l-2 border-slate-100">
             {cooldownSteps.map((step) => (
               <StepFields
                 key={step.key}
@@ -481,7 +481,7 @@ export default function EditRunningWorkoutForm({
             <button
               type="button"
               onClick={() => setCooldownSteps((prev) => [...prev, makeStep("cooldown")])}
-              className="text-xs text-gray-500 hover:text-gray-700 transition underline"
+              className="text-xs text-slate-500 hover:text-slate-700 transition underline"
             >
               Legg til steg
             </button>
@@ -495,7 +495,7 @@ export default function EditRunningWorkoutForm({
         <button
           type="submit"
           disabled={isPending}
-          className="px-4 py-2 bg-gray-800 text-white text-sm rounded-lg hover:bg-gray-700 transition font-medium disabled:opacity-50"
+          className="px-4 py-2 bg-emerald-600 text-white text-sm rounded-lg hover:bg-emerald-700 transition font-medium disabled:opacity-50"
         >
           {isPending ? "Lagrer..." : "Oppdater økt"}
         </button>
@@ -503,7 +503,7 @@ export default function EditRunningWorkoutForm({
           type="button"
           onClick={onDone}
           disabled={isPending}
-          className="px-4 py-2 text-sm text-gray-500 hover:text-gray-700 transition disabled:opacity-50"
+          className="px-4 py-2 text-sm text-slate-500 hover:text-slate-700 transition disabled:opacity-50"
         >
           Avbryt
         </button>

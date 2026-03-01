@@ -50,21 +50,21 @@ function RecipeCard({
   })).filter((cat) => cat.items.length > 0);
 
   return (
-    <div className="border border-gray-100 rounded-xl overflow-hidden">
+    <div className="border border-slate-100 rounded-xl overflow-hidden">
       <button
         type="button"
         onClick={() => {
           setIsOpen((prev) => !prev);
           setIsEditing(false);
         }}
-        className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-gray-50 transition"
+        className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-slate-50 transition"
       >
-        <span className="text-sm font-medium text-gray-800">{recipe.name}</span>
-        <span className="text-gray-400 text-xs">{isOpen ? "▲" : "▼"}</span>
+        <span className="text-sm font-medium text-slate-800">{recipe.name}</span>
+        <span className="text-slate-400 text-xs">{isOpen ? "▲" : "▼"}</span>
       </button>
 
       {isOpen && (
-        <div className="px-4 pb-4 border-t border-gray-100 pt-3">
+        <div className="px-4 pb-4 border-t border-slate-100 pt-3">
           {isEditing ? (
             <EditRecipeForm
               recipe={recipe}
@@ -77,16 +77,16 @@ function RecipeCard({
                 <button
                   type="button"
                   onClick={() => setShowIngredients((prev) => !prev)}
-                  className="flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-gray-400 hover:text-gray-600 transition mb-2"
+                  className="flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-slate-400 hover:text-slate-600 transition mb-2"
                 >
                   Ingredienser
-                  <span className="text-gray-300">{showIngredients ? "▲" : "▼"}</span>
+                  <span className="text-slate-300">{showIngredients ? "▲" : "▼"}</span>
                 </button>
                 {showIngredients && (
                   <div className="space-y-3">
                     {groupedIngredients.map((cat) => (
                       <div key={cat.value}>
-                        <h4 className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-1">
+                        <h4 className="text-xs font-semibold uppercase tracking-wide text-slate-400 mb-1">
                           {cat.label}
                         </h4>
                         <ul className="space-y-1">
@@ -95,9 +95,9 @@ function RecipeCard({
                               ing.name.toLowerCase().trim()
                             );
                             return (
-                              <li key={ing.id} className="text-sm text-gray-700">
+                              <li key={ing.id} className="text-sm text-slate-700">
                                 {ing.name}{" "}
-                                <span className="text-gray-400">
+                                <span className="text-slate-400">
                                   {ing.amount} {ing.unit}
                                 </span>
                                 {inInventory && (
@@ -120,15 +120,15 @@ function RecipeCard({
                 <button
                   type="button"
                   onClick={() => setShowInstructions((prev) => !prev)}
-                  className="flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-gray-400 hover:text-gray-600 transition mb-2"
+                  className="flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-slate-400 hover:text-slate-600 transition mb-2"
                 >
                   Fremgangsmåte
-                  <span className="text-gray-300">{showInstructions ? "▲" : "▼"}</span>
+                  <span className="text-slate-300">{showInstructions ? "▲" : "▼"}</span>
                 </button>
                 {showInstructions && (
                   <ol className="space-y-2 list-decimal list-inside">
                     {sortedInstructions.map((step) => (
-                      <li key={step.id} className="text-sm text-gray-700">
+                      <li key={step.id} className="text-sm text-slate-700">
                         {step.step_text}
                       </li>
                     ))}
@@ -141,7 +141,7 @@ function RecipeCard({
                 <button
                   type="button"
                   onClick={() => setIsEditing(true)}
-                  className="text-xs text-gray-500 hover:text-gray-700 transition"
+                  className="text-xs text-slate-500 hover:text-slate-700 transition"
                 >
                   Rediger
                 </button>
@@ -183,7 +183,7 @@ export default function RecipeList({
 }) {
   if (recipes.length === 0) {
     return (
-      <p className="text-gray-400 text-sm">Ingen oppskrifter lagt til ennå.</p>
+      <p className="text-slate-400 text-sm">Ingen oppskrifter lagt til ennå.</p>
     );
   }
 

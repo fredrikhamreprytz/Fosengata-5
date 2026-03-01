@@ -17,7 +17,7 @@ export default function ClearShoppingListButton() {
   if (confirming) {
     return (
       <div className="flex items-center gap-2">
-        <span className="text-sm text-gray-600">Er du sikker?</span>
+        <span className="text-sm text-slate-600">Er du sikker?</span>
         <button
           type="button"
           onClick={handleClear}
@@ -29,7 +29,7 @@ export default function ClearShoppingListButton() {
         <button
           type="button"
           onClick={() => setConfirming(false)}
-          className="text-xs text-gray-400 hover:text-gray-600 transition"
+          className="text-xs text-slate-400 hover:text-slate-600 transition"
         >
           Avbryt
         </button>
@@ -41,7 +41,7 @@ export default function ClearShoppingListButton() {
     <button
       type="button"
       onClick={() => setConfirming(true)}
-      className="text-xs text-gray-400 hover:text-red-500 transition"
+      className="text-xs text-slate-400 hover:text-red-500 transition"
     >
       Tøm handleliste
     </button>

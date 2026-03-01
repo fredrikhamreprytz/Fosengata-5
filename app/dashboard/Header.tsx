@@ -12,12 +12,12 @@ export default function Header() {
           height={80}
           className="rounded-full object-contain w-12 h-12 sm:w-20 sm:h-20"
         />
-        <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Fosengata 5</h1>
+        <h1 className="text-xl sm:text-2xl font-bold text-slate-800">Fosengata 5</h1>
       </div>
       <form action={signOut}>
         <button
           type="submit"
-          className="px-4 py-2 bg-gray-800 text-white text-sm rounded-lg hover:bg-gray-700 transition font-medium"
+          className="px-4 py-2 border border-slate-300 text-slate-700 text-sm rounded-lg hover:bg-slate-50 transition font-medium"
         >
           Logg ut
         </button>

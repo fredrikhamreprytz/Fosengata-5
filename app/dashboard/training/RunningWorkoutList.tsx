@@ -72,13 +72,13 @@ function PhaseSection({
         onClick={() => setIsOpen((prev) => !prev)}
         className="flex items-center gap-2 w-full text-left"
       >
-        <span className="text-xs font-semibold uppercase tracking-wide text-gray-400">
+        <span className="text-xs font-semibold uppercase tracking-wide text-slate-400">
           {label}
         </span>
         {summary.length > 0 && (
-          <span className="text-xs text-gray-400">{summary.join(" · ")}</span>
+          <span className="text-xs text-slate-400">{summary.join(" · ")}</span>
         )}
-        <span className="text-gray-300 text-xs ml-auto">{isOpen ? "▲" : "▼"}</span>
+        <span className="text-slate-300 text-xs ml-auto">{isOpen ? "▲" : "▼"}</span>
       </button>
       {isOpen && (
         <div className="space-y-1">
@@ -104,24 +104,24 @@ function RunningWorkoutCard({ workout }: { workout: RunningWorkout }) {
   );
 
   return (
-    <div className="border border-gray-100 rounded-xl overflow-hidden">
+    <div className="border border-slate-100 rounded-xl overflow-hidden">
       <button
         type="button"
         onClick={() => {
           setIsOpen((prev) => !prev);
           setIsEditing(false);
         }}
-        className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-gray-50 transition"
+        className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-slate-50 transition"
       >
-        <span className="text-sm font-medium text-gray-800">{workout.name}</span>
-        <span className="text-gray-400 text-xs">
+        <span className="text-sm font-medium text-slate-800">{workout.name}</span>
+        <span className="text-slate-400 text-xs">
           {totalSeconds > 0 && <span className="mr-2">{formatDuration(totalSeconds)}</span>}
           {isOpen ? "▲" : "▼"}
         </span>
       </button>
 
       {isOpen && (
-        <div className="px-4 pb-4 border-t border-gray-100 pt-3 space-y-4">
+        <div className="px-4 pb-4 border-t border-slate-100 pt-3 space-y-4">
           {isEditing ? (
             <EditRunningWorkoutForm
               workout={workout}
@@ -137,7 +137,7 @@ function RunningWorkoutCard({ workout }: { workout: RunningWorkout }) {
                 <button
                   type="button"
                   onClick={() => setIsEditing(true)}
-                  className="text-xs text-gray-500 hover:text-gray-700 transition"
+                  className="text-xs text-slate-500 hover:text-slate-700 transition"
                 >
                   Rediger
                 </button>
@@ -166,7 +166,7 @@ export default function RunningWorkoutList({
 }) {
   if (workouts.length === 0) {
     return (
-      <p className="text-gray-400 text-sm">Ingen løpeøkter lagt til ennå.</p>
+      <p className="text-slate-400 text-sm">Ingen løpeøkter lagt til ennå.</p>
     );
   }
 

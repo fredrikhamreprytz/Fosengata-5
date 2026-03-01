@@ -26,14 +26,14 @@ export default function AddGroceryForm({ listType }: { listType: ListType }) {
           name="name"
           placeholder="Varenavn"
           required
-          className="border border-gray-300 rounded-lg bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400"
+          className="border border-slate-300 rounded-lg bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
         />
 
         <select
           name="category"
           required
           defaultValue=""
-          className="border border-gray-300 rounded-lg bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-400"
+          className="border border-slate-300 rounded-lg bg-white px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
         >
           <option value="" disabled>
             Kategori
@@ -52,14 +52,14 @@ export default function AddGroceryForm({ listType }: { listType: ListType }) {
           min="0.01"
           step="any"
           required
-          className="border border-gray-300 rounded-lg bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400"
+          className="border border-slate-300 rounded-lg bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
         />
 
         <select
           name="unit"
           required
           defaultValue=""
-          className="border border-gray-300 rounded-lg bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-400"
+          className="border border-slate-300 rounded-lg bg-white px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
         >
           <option value="" disabled>
             Enhet
@@ -79,7 +79,7 @@ export default function AddGroceryForm({ listType }: { listType: ListType }) {
       <button
         type="submit"
         disabled={isPending}
-        className="w-full sm:w-auto px-5 py-2 bg-gray-800 text-white text-sm rounded-lg hover:bg-gray-700 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full sm:w-auto px-5 py-2 bg-emerald-600 text-white text-sm rounded-lg hover:bg-emerald-700 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isPending ? "Legger til..." : "Legg til"}
       </button>

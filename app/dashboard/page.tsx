@@ -90,7 +90,7 @@ export default async function Dashboard({
   })).filter((cat) => cat.items.length > 0);
 
   return (
-    <main className="min-h-screen bg-gray-50 p-3 sm:p-6">
+    <main className="min-h-screen bg-slate-50 p-3 sm:p-6">
       <div className="max-w-3xl mx-auto space-y-6">
         {/* Header */}
         <Header />
@@ -101,37 +101,37 @@ export default async function Dashboard({
         {isGroceryTab(activeTab) ? (
           <>
             {/* Add grocery card */}
-            <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 space-y-4">
-              <h2 className="text-lg font-semibold text-gray-700">Legg til vare</h2>
+            <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4 sm:p-6 space-y-4">
+              <h2 className="text-lg font-semibold text-slate-700">Legg til vare</h2>
               <AddGroceryForm listType={activeTab} />
             </div>
 
             {/* Grocery list card */}
-            <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 space-y-6">
+            <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4 sm:p-6 space-y-6">
               {activeTab === "shopping" ? (
                 <ShoppingList groceries={groceries} />
               ) : (
                 <>
-                  <h2 className="text-lg font-semibold text-gray-700">Beholdning</h2>
+                  <h2 className="text-lg font-semibold text-slate-700">Beholdning</h2>
                   {grouped.length === 0 ? (
-                    <p className="text-gray-400 text-sm">
+                    <p className="text-slate-400 text-sm">
                       Ingen varer i beholdningen ennå.
                     </p>
                   ) : (
                     grouped.map((cat) => (
                       <div key={cat.value}>
-                        <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-2">
+                        <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-400 mb-2">
                           {cat.label}
                         </h3>
-                        <ul className="divide-y divide-gray-100">
+                        <ul className="divide-y divide-slate-100">
                           {cat.items.map((item) => (
                             <li
                               key={item.id}
                               className="flex items-center justify-between py-2"
                             >
-                              <span className="text-sm text-gray-800">
+                              <span className="text-sm text-slate-800">
                                 {item.name}
-                                <span className="ml-2 text-gray-400">
+                                <span className="ml-2 text-slate-400">
                                   {item.amount} {item.unit}
                                 </span>
                               </span>
@@ -157,14 +157,14 @@ export default async function Dashboard({
         ) : activeTab === "recipes" ? (
           <>
             {/* Add recipe card */}
-            <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 space-y-4">
-              <h2 className="text-lg font-semibold text-gray-700">Legg til oppskrift</h2>
+            <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4 sm:p-6 space-y-4">
+              <h2 className="text-lg font-semibold text-slate-700">Legg til oppskrift</h2>
               <AddRecipeForm />
             </div>
 
             {/* Recipe list card */}
-            <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 space-y-4">
-              <h2 className="text-lg font-semibold text-gray-700">Oppskrifter</h2>
+            <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4 sm:p-6 space-y-4">
+              <h2 className="text-lg font-semibold text-slate-700">Oppskrifter</h2>
               <RecipeList recipes={recipes} inventoryNames={inventoryNames} />
             </div>
           </>
@@ -176,28 +176,28 @@ export default async function Dashboard({
             {trainingSubTab === "running" ? (
               <>
                 {/* Add running workout card */}
-                <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 space-y-4">
-                  <h2 className="text-lg font-semibold text-gray-700">Legg til løpeøkt</h2>
+                <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4 sm:p-6 space-y-4">
+                  <h2 className="text-lg font-semibold text-slate-700">Legg til løpeøkt</h2>
                   <AddRunningWorkoutForm />
                 </div>
 
                 {/* Running workout list card */}
-                <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 space-y-4">
-                  <h2 className="text-lg font-semibold text-gray-700">Løpeøkter</h2>
+                <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4 sm:p-6 space-y-4">
+                  <h2 className="text-lg font-semibold text-slate-700">Løpeøkter</h2>
                   <RunningWorkoutList workouts={runningWorkouts} />
                 </div>
               </>
             ) : (
               <>
                 {/* Add strength workout card */}
-                <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 space-y-4">
-                  <h2 className="text-lg font-semibold text-gray-700">Legg til styrkeøkt</h2>
+                <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4 sm:p-6 space-y-4">
+                  <h2 className="text-lg font-semibold text-slate-700">Legg til styrkeøkt</h2>
                   <AddStrengthWorkoutForm />
                 </div>
 
                 {/* Strength workout list card */}
-                <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 space-y-4">
-                  <h2 className="text-lg font-semibold text-gray-700">Styrkeøkter</h2>
+                <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4 sm:p-6 space-y-4">
+                  <h2 className="text-lg font-semibold text-slate-700">Styrkeøkter</h2>
                   <StrengthWorkoutList workouts={strengthWorkouts} />
                 </div>
               </>
