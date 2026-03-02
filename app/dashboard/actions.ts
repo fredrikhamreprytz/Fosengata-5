@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { GROCERY_CATEGORIES, GROCERY_UNITS, RECIPE_UNITS } from "@/lib/types";
 import type { GroceryCategory, GroceryUnit, ListType, RecipeIngredientInput, RecipeUnit } from "@/lib/types";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 export async function signOut() {
   const supabase = await createClient();
@@ -13,16 +14,29 @@ export async function signOut() {
   redirect("/login");
 }
 
+async function getAuthAndHousehold(supabase: SupabaseClient) {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { user: null, householdId: null };
+
+  const { data } = await supabase
+    .from("household_members")
+    .select("household_id")
+    .eq("user_id", user.id)
+    .single();
+
+  return { user, householdId: data?.household_id ?? null };
+}
+
 export async function addGrocery(
   _prevState: { error: string | null },
   formData: FormData
 ): Promise<{ error: string | null }> {
   const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { user, householdId } = await getAuthAndHousehold(supabase);
   if (!user) return { error: "Ikke autentisert." };
+  if (!householdId) return { error: "Ingen husstand funnet." };
 
   const name = (formData.get("name") as string | null)?.trim();
   const category = formData.get("category") as string | null;
@@ -54,6 +68,7 @@ export async function addGrocery(
       : "shopping";
 
   const { error } = await supabase.from("groceries").insert({
+    household_id: householdId,
     name,
     category,
     amount,
@@ -69,24 +84,27 @@ export async function addGrocery(
 
 export async function clearShoppingList() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return;
-  await supabase.from("groceries").delete().eq("list_type", "shopping");
+  const { user, householdId } = await getAuthAndHousehold(supabase);
+  if (!user || !householdId) return;
+
+  await supabase
+    .from("groceries")
+    .delete()
+    .eq("household_id", householdId)
+    .eq("list_type", "shopping");
+
   revalidatePath("/dashboard");
 }
 
 export async function deleteGrocery(formData: FormData) {
   const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return;
+  const { user, householdId } = await getAuthAndHousehold(supabase);
+  if (!user || !householdId) return;
 
   const id = formData.get("id") as string | null;
   if (!id) return;
 
-  await supabase.from("groceries").delete().eq("id", id);
+  await supabase.from("groceries").delete().eq("id", id).eq("household_id", householdId);
   revalidatePath("/dashboard");
 }
 
@@ -96,11 +114,9 @@ export async function addRecipe(payload: {
   instructions: string[];
 }): Promise<{ error: string | null }> {
   const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { user, householdId } = await getAuthAndHousehold(supabase);
   if (!user) return { error: "Ikke autentisert." };
+  if (!householdId) return { error: "Ingen husstand funnet." };
 
   const name = payload.name.trim();
   if (!name) return { error: "Oppskriftnavn er påkrevd." };
@@ -119,7 +135,7 @@ export async function addRecipe(payload: {
 
   const { data: recipe, error: recipeError } = await supabase
     .from("recipes")
-    .insert({ name })
+    .insert({ name, household_id: householdId })
     .select("id")
     .single();
 
@@ -161,11 +177,9 @@ export async function updateRecipe(
   }
 ): Promise<{ error: string | null }> {
   const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { user, householdId } = await getAuthAndHousehold(supabase);
   if (!user) return { error: "Ikke autentisert." };
+  if (!householdId) return { error: "Ingen husstand funnet." };
 
   const name = payload.name.trim();
   if (!name) return { error: "Oppskriftnavn er påkrevd." };
@@ -185,7 +199,8 @@ export async function updateRecipe(
   const { error: nameError } = await supabase
     .from("recipes")
     .update({ name })
-    .eq("id", id);
+    .eq("id", id)
+    .eq("household_id", householdId);
 
   if (nameError) return { error: "Kunne ikke oppdatere oppskriften. Prøv igjen." };
 
@@ -234,12 +249,20 @@ export async function addRecipeToShoppingList(
   ingredients: RecipeIngredientInput[]
 ): Promise<{ error: string | null }> {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const { user, householdId } = await getAuthAndHousehold(supabase);
   if (!user) return { error: "Ikke autentisert." };
+  if (!householdId) return { error: "Ingen husstand funnet." };
 
   const rows = ingredients.map((ing) => {
     const { amount, unit } = convertToGroceryUnit(ing.amount, ing.unit);
-    return { name: ing.name, category: ing.category, amount, unit, list_type: "shopping" as ListType };
+    return {
+      household_id: householdId,
+      name: ing.name,
+      category: ing.category,
+      amount,
+      unit,
+      list_type: "shopping" as ListType,
+    };
   });
 
   const { error } = await supabase.from("groceries").insert(rows);
@@ -251,16 +274,13 @@ export async function addRecipeToShoppingList(
 
 export async function deleteRecipe(formData: FormData) {
   const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return;
+  const { user, householdId } = await getAuthAndHousehold(supabase);
+  if (!user || !householdId) return;
 
   const id = formData.get("id") as string | null;
   if (!id) return;
 
-  await supabase.from("recipes").delete().eq("id", id);
+  await supabase.from("recipes").delete().eq("id", id).eq("household_id", householdId);
   revalidatePath("/dashboard");
 }
 

@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { GROCERY_CATEGORIES } from "@/lib/types";
 import type { Grocery, ListType, DashboardTab, Recipe, RunningWorkout, StrengthWorkout, TrainingSubTab } from "@/lib/types";
+import { getUserHouseholdId } from "@/lib/household";
 import { deleteGrocery } from "./actions";
 import AddGroceryForm from "./AddGroceryForm";
 import AddRecipeForm from "./AddRecipeForm";
@@ -31,6 +32,16 @@ export default async function Dashboard({
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
+  const householdId = await getUserHouseholdId();
+  if (!householdId) redirect("/household/setup");
+
+  const { data: householdData } = await supabase
+    .from("households")
+    .select("name")
+    .eq("id", householdId)
+    .single();
+  const householdName = householdData?.name ?? "";
+
   const { tab, subtab } = await searchParams;
   const activeTab: DashboardTab =
     tab === "shopping" || tab === "inventory" || tab === "recipes" || tab === "training"
@@ -49,6 +60,7 @@ export default async function Dashboard({
     const { data } = await supabase
       .from("groceries")
       .select("*")
+      .eq("household_id", householdId)
       .eq("list_type", activeTab)
       .order("created_at", { ascending: false });
     groceries = data ?? [];
@@ -57,8 +69,9 @@ export default async function Dashboard({
       supabase
         .from("recipes")
         .select("*, recipe_ingredients(*), recipe_instructions(*)")
+        .eq("household_id", householdId)
         .order("created_at", { ascending: false }),
-      supabase.from("groceries").select("name").eq("list_type", "inventory"),
+      supabase.from("groceries").select("name").eq("household_id", householdId).eq("list_type", "inventory"),
     ]);
     recipes = recipesResult.data ?? [];
     inventoryNames = new Set(
@@ -93,7 +106,7 @@ export default async function Dashboard({
     <main className="min-h-screen bg-slate-50 p-3 sm:p-6">
       <div className="max-w-3xl mx-auto space-y-6">
         {/* Header */}
-        <Header />
+        <Header householdName={householdName} />
 
         {/* Tab switcher */}
         <TabSwitcher activeTab={activeTab} />
