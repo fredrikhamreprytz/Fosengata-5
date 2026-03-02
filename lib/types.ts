@@ -48,6 +48,7 @@ export type ListType = "shopping" | "inventory";
 
 export interface Grocery {
   id: string;
+  household_id: string;
   name: string;
   category: GroceryCategory;
   amount: number;
@@ -124,8 +125,33 @@ export interface RecipeInstruction {
 
 export interface Recipe {
   id: string;
+  household_id: string;
   name: string;
   created_at: string;
   recipe_ingredients: RecipeIngredient[];
   recipe_instructions: RecipeInstruction[];
+}
+
+export interface Household {
+  id: string;
+  name: string;
+  created_at: string;
+}
+
+export type HouseholdRole = "owner" | "member";
+
+export interface HouseholdMember {
+  id: string;
+  household_id: string;
+  user_id: string;
+  role: HouseholdRole;
+  joined_at: string;
+}
+
+export interface HouseholdInvite {
+  id: string;
+  household_id: string;
+  invited_email: string;
+  invited_by: string;
+  created_at: string;
 }
