@@ -3,23 +3,14 @@ import { signup } from "./actions";
 export default async function SignupPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; message?: string; mode?: string }>;
+  searchParams: Promise<{ error?: string; message?: string }>;
 }) {
-  const { error, message, mode } = await searchParams;
-  const isInvited = mode === "invited";
+  const { error, message } = await searchParams;
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-slate-50">
       <div className="rounded-2xl bg-white p-10 shadow-md w-full max-w-sm space-y-6 border border-slate-100">
-        <h1 className="text-2xl font-bold text-slate-800 text-center">
-          {isInvited ? "Registrer deg" : "Opprett husstand"}
-        </h1>
-
-        {isInvited && (
-          <p className="text-sm text-slate-500 bg-slate-50 rounded-lg px-4 py-2 text-center">
-            Du er invitert til en husstand
-          </p>
-        )}
+        <h1 className="text-2xl font-bold text-slate-800 text-center">Opprett konto</h1>
 
         {error && (
           <p className="text-sm text-red-600 bg-red-50 rounded-lg px-4 py-2">{error}</p>
@@ -30,23 +21,19 @@ export default async function SignupPage({
 
         {!message && (
           <form action={signup} className="space-y-4">
-            <input type="hidden" name="mode" value={mode ?? "create"} />
-
-            {!isInvited && (
-              <div className="space-y-1">
-                <label htmlFor="household_name" className="text-sm font-medium text-slate-700">
-                  Husstandsnavn
-                </label>
-                <input
-                  id="household_name"
-                  name="household_name"
-                  type="text"
-                  required
-                  placeholder="f.eks. Fosengata 5"
-                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                />
-              </div>
-            )}
+            <div className="space-y-1">
+              <label htmlFor="display_name" className="text-sm font-medium text-slate-700">
+                Ditt navn
+              </label>
+              <input
+                id="display_name"
+                name="display_name"
+                type="text"
+                required
+                placeholder="f.eks. Ola Nordmann"
+                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              />
+            </div>
 
             <div className="space-y-1">
               <label htmlFor="email" className="text-sm font-medium text-slate-700">

@@ -11,7 +11,8 @@ export async function getUserHouseholdId(): Promise<string | null> {
     .from("household_members")
     .select("household_id")
     .eq("user_id", user.id)
-    .single();
+    .limit(1)
+    .maybeSingle();
 
   return data?.household_id ?? null;
 }

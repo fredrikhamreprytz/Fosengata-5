@@ -155,3 +155,16 @@ export interface HouseholdInvite {
   invited_by: string;
   created_at: string;
 }
+
+export interface Profile {
+  id: string;
+  display_name: string;
+  created_at: string;
+}
+
+export interface JoinRequest {
+  id: string;
+  household_id: string;
+  user_id: string;
+  requested_at: string;
+}

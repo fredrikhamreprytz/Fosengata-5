@@ -29,23 +29,10 @@ export async function proxy(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const allowed = (process.env.ALLOWED_EMAILS ?? "")
-    .split(",")
-    .map((e) => e.trim().toLowerCase())
-    .filter(Boolean);
-
-  if (user && !allowed.includes((user.email ?? "").toLowerCase())) {
-    await supabase.auth.signOut();
-    return NextResponse.redirect(
-      new URL(
-        "/login?error=" +
-          encodeURIComponent("Du har ikke tilgang til denne siden."),
-        request.url
-      )
-    );
-  }
-
-  if (!user && request.nextUrl.pathname.startsWith("/dashboard")) {
+  const isProtected = ["/dashboard", "/household"].some((p) =>
+    request.nextUrl.pathname.startsWith(p)
+  );
+  if (!user && isProtected) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
@@ -61,5 +48,10 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/login", "/signup"],
+  matcher: [
+    "/dashboard/:path*",
+    "/login",
+    "/signup",
+    "/household/:path*",
+  ],
 };

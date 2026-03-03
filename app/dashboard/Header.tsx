@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { signOut } from "./actions";
 
-export default function Header({ householdName }: { householdName: string }) {
+export default function Header({ householdName, userName }: { householdName: string; userName: string }) {
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-3">
@@ -15,6 +15,7 @@ export default function Header({ householdName }: { householdName: string }) {
         />
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-slate-800">{householdName}</h1>
+          <p className="text-xs text-slate-500">Hei, {userName}</p>
           <Link
             href="/household/settings"
             className="text-xs text-slate-400 hover:text-slate-600 transition"

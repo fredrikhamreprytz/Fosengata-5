@@ -2,7 +2,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getUserHouseholdId } from "@/lib/household";
-import { removeInvite, removeMember } from "../actions";
+import { removeInvite, removeMember, acceptJoinRequest, rejectJoinRequest } from "../actions";
+import EditNameForm from "./EditNameForm";
 import InviteForm from "./InviteForm";
 
 export default async function HouseholdSettingsPage() {
@@ -16,15 +17,28 @@ export default async function HouseholdSettingsPage() {
   const householdId = await getUserHouseholdId();
   if (!householdId) redirect("/household/setup");
 
-  const [householdResult, membersResult, invitesResult] = await Promise.all([
+  const [householdResult, membersResult, invitesResult, joinRequestsResult] = await Promise.all([
     supabase.from("households").select("name").eq("id", householdId).single(),
     supabase.from("household_members").select("id, user_id, role").eq("household_id", householdId),
     supabase.from("household_invites").select("id, invited_email, created_at").eq("household_id", householdId).order("created_at", { ascending: true }),
+    supabase.from("join_requests").select("id, user_id, requested_at").eq("household_id", householdId).order("requested_at", { ascending: true }),
   ]);
 
   const householdName = householdResult.data?.name ?? "";
   const members = membersResult.data ?? [];
   const invites = invitesResult.data ?? [];
+  const joinRequests = joinRequestsResult.data ?? [];
+
+  const allUserIds = [
+    ...members.map((m) => m.user_id),
+    ...joinRequests.map((r) => r.user_id),
+  ];
+
+  const { data: profilesData } = await supabase
+    .from("profiles")
+    .select("id, display_name")
+    .in("id", allUserIds.length > 0 ? allUserIds : ["00000000-0000-0000-0000-000000000000"]);
+  const profileMap = new Map(profilesData?.map((p) => [p.id, p.display_name]) ?? []);
 
   const currentMember = members.find((m) => m.user_id === user.id);
   const isOwner = currentMember?.role === "owner";
@@ -48,30 +62,71 @@ export default async function HouseholdSettingsPage() {
           <h2 className="text-base font-semibold text-slate-700">Medlemmer</h2>
           <ul className="divide-y divide-slate-100">
             {members.map((member) => (
-              <li key={member.id} className="flex items-center justify-between py-3">
-                <div>
-                  <span className="text-sm text-slate-800">
-                    {member.user_id === user.id ? "Deg" : member.user_id}
-                  </span>
-                  <span className="ml-2 text-xs text-slate-400">
-                    {member.role === "owner" ? "(eier)" : ""}
-                  </span>
+              <li key={member.id} className="py-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="text-sm text-slate-800">
+                      {profileMap.get(member.user_id) ?? "Ukjent"}
+                    </span>
+                    <span className="ml-2 text-xs text-slate-400">
+                      {member.role === "owner" ? "(eier)" : ""}
+                    </span>
+                  </div>
+                  {isOwner && member.user_id !== user.id && (
+                    <form action={removeMember}>
+                      <input type="hidden" name="id" value={member.id} />
+                      <button
+                        type="submit"
+                        className="text-xs text-red-500 hover:text-red-700 transition"
+                      >
+                        Fjern
+                      </button>
+                    </form>
+                  )}
                 </div>
-                {isOwner && member.user_id !== user.id && (
-                  <form action={removeMember}>
-                    <input type="hidden" name="id" value={member.id} />
-                    <button
-                      type="submit"
-                      className="text-xs text-red-500 hover:text-red-700 transition"
-                    >
-                      Fjern
-                    </button>
-                  </form>
+                {member.user_id === user.id && (
+                  <EditNameForm currentName={profileMap.get(user.id) ?? ""} />
                 )}
               </li>
             ))}
           </ul>
         </div>
+
+        {/* Join Requests */}
+        {isOwner && joinRequests.length > 0 && (
+          <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6 space-y-4">
+            <h2 className="text-base font-semibold text-slate-700">Innmeldingsforespørsler</h2>
+            <ul className="divide-y divide-slate-100">
+              {joinRequests.map((req) => (
+                <li key={req.id} className="flex items-center justify-between py-3">
+                  <span className="text-sm text-slate-800">
+                    {profileMap.get(req.user_id) ?? "Ukjent"}
+                  </span>
+                  <div className="flex gap-2">
+                    <form action={acceptJoinRequest}>
+                      <input type="hidden" name="request_id" value={req.id} />
+                      <button
+                        type="submit"
+                        className="text-xs text-emerald-600 hover:text-emerald-800 font-medium transition"
+                      >
+                        Godkjenn
+                      </button>
+                    </form>
+                    <form action={rejectJoinRequest}>
+                      <input type="hidden" name="request_id" value={req.id} />
+                      <button
+                        type="submit"
+                        className="text-xs text-red-500 hover:text-red-700 transition"
+                      >
+                        Avvis
+                      </button>
+                    </form>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         {/* Invites */}
         {isOwner && (

@@ -35,12 +35,12 @@ export default async function Dashboard({
   const householdId = await getUserHouseholdId();
   if (!householdId) redirect("/household/setup");
 
-  const { data: householdData } = await supabase
-    .from("households")
-    .select("name")
-    .eq("id", householdId)
-    .single();
-  const householdName = householdData?.name ?? "";
+  const [householdData, profileData] = await Promise.all([
+    supabase.from("households").select("name").eq("id", householdId).single(),
+    supabase.from("profiles").select("display_name").eq("id", user.id).single(),
+  ]);
+  const householdName = householdData.data?.name ?? "";
+  const userName = profileData.data?.display_name ?? user.email ?? "";
 
   const { tab, subtab } = await searchParams;
   const activeTab: DashboardTab =
@@ -106,7 +106,7 @@ export default async function Dashboard({
     <main className="min-h-screen bg-slate-50 p-3 sm:p-6">
       <div className="max-w-3xl mx-auto space-y-6">
         {/* Header */}
-        <Header householdName={householdName} />
+        <Header householdName={householdName} userName={userName} />
 
         {/* Tab switcher */}
         <TabSwitcher activeTab={activeTab} />

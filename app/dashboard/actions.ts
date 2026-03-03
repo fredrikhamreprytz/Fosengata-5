@@ -424,7 +424,7 @@ export async function addStrengthWorkout(payload: {
     .select("id")
     .single();
 
-  if (workoutError || !workout) return { error: "Kunne ikke lagre økt. Prøv igjen." };
+  if (workoutError || !workout) return { error: workoutError?.message ?? "Kunne ikke lagre økt. Prøv igjen." };
 
   const { error: exercisesError } = await supabase.from("strength_exercises").insert(
     payload.exercises.map((ex, i) => ({
@@ -438,7 +438,7 @@ export async function addStrengthWorkout(payload: {
     }))
   );
 
-  if (exercisesError) return { error: "Kunne ikke lagre øvelser. Prøv igjen." };
+  if (exercisesError) return { error: exercisesError.message };
 
   revalidatePath("/dashboard");
   return { error: null };
