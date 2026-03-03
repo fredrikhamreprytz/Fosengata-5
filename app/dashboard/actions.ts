@@ -501,3 +501,68 @@ export async function deleteStrengthWorkout(formData: FormData) {
   await supabase.from("strength_workouts").delete().eq("id", id);
   revalidatePath("/dashboard");
 }
+
+export async function addPackingItem(
+  _prevState: { error: string | null },
+  formData: FormData
+): Promise<{ error: string | null }> {
+  const supabase = await createClient();
+  const { user, householdId } = await getAuthAndHousehold(supabase);
+  if (!user) return { error: "Ikke autentisert." };
+  if (!householdId) return { error: "Ingen husstand funnet." };
+
+  const name = (formData.get("name") as string | null)?.trim();
+  if (!name) return { error: "Navn er påkrevd." };
+  const isPersonal = formData.get("is_personal") === "true";
+
+  const { error } = await supabase
+    .from("packing_items")
+    .insert({ household_id: householdId, name, is_personal: isPersonal, created_by: user.id });
+
+  if (error) return { error: "Kunne ikke legge til element. Prøv igjen." };
+
+  revalidatePath("/dashboard");
+  return { error: null };
+}
+
+export async function deletePackingItem(formData: FormData): Promise<void> {
+  const supabase = await createClient();
+  const { user, householdId } = await getAuthAndHousehold(supabase);
+  if (!user || !householdId) return;
+
+  const id = formData.get("id") as string | null;
+  if (!id) return;
+
+  await supabase
+    .from("packing_items")
+    .delete()
+    .eq("id", id)
+    .eq("household_id", householdId);
+
+  revalidatePath("/dashboard");
+}
+
+export async function togglePackingCheck(
+  itemId: string,
+  checked: boolean
+): Promise<void> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return;
+
+  if (checked) {
+    await supabase
+      .from("packing_checks")
+      .delete()
+      .eq("item_id", itemId)
+      .eq("user_id", user.id);
+  } else {
+    await supabase
+      .from("packing_checks")
+      .insert({ item_id: itemId, user_id: user.id });
+  }
+
+  revalidatePath("/dashboard");
+}

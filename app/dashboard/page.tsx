@@ -1,12 +1,24 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { GROCERY_CATEGORIES } from "@/lib/types";
-import type { Grocery, ListType, DashboardTab, Recipe, RunningWorkout, StrengthWorkout, TrainingSubTab } from "@/lib/types";
+import type {
+  Grocery,
+  DashboardTab,
+  ListsSubTab,
+  ListType,
+  PackingItem,
+  PackingMember,
+  Recipe,
+  RunningWorkout,
+  StrengthWorkout,
+  TrainingSubTab,
+} from "@/lib/types";
 import { getUserHouseholdId } from "@/lib/household";
 import { deleteGrocery } from "./actions";
 import AddGroceryForm from "./AddGroceryForm";
 import AddRecipeForm from "./AddRecipeForm";
 import Header from "./Header";
+import ListsSubSwitcher from "./ListsSubSwitcher";
 import RecipeList from "./RecipeList";
 import ShoppingList from "./ShoppingList";
 import TabSwitcher from "./TabSwitcher";
@@ -15,10 +27,8 @@ import RunningWorkoutList from "./training/RunningWorkoutList";
 import TrainingSubSwitcher from "./training/TrainingSubSwitcher";
 import AddStrengthWorkoutForm from "./training/AddStrengthWorkoutForm";
 import StrengthWorkoutList from "./training/StrengthWorkoutList";
-
-function isGroceryTab(t: DashboardTab): t is ListType {
-  return t === "shopping" || t === "inventory";
-}
+import AddPackingItemForm from "./packing/AddPackingItemForm";
+import PackingList from "./packing/PackingList";
 
 export default async function Dashboard({
   searchParams,
@@ -43,9 +53,17 @@ export default async function Dashboard({
   const userName = profileData.data?.display_name ?? user.email ?? "";
 
   const { tab, subtab } = await searchParams;
+
   const activeTab: DashboardTab =
-    tab === "shopping" || tab === "inventory" || tab === "recipes" || tab === "training"
-      ? tab
+    tab === "lists" || tab === "recipes" || tab === "training" ? tab : "lists";
+
+  const listsSubTab: ListsSubTab =
+    activeTab === "lists"
+      ? subtab === "inventory"
+        ? "inventory"
+        : subtab === "packing"
+        ? "packing"
+        : "shopping"
       : "shopping";
 
   const trainingSubTab: TrainingSubTab = subtab === "strength" ? "strength" : "running";
@@ -55,15 +73,51 @@ export default async function Dashboard({
   let runningWorkouts: RunningWorkout[] = [];
   let strengthWorkouts: StrengthWorkout[] = [];
   let inventoryNames = new Set<string>();
+  let packingItems: PackingItem[] = [];
+  let packingChecks: { item_id: string; user_id: string }[] = [];
+  let packingMembers: PackingMember[] = [];
 
-  if (isGroceryTab(activeTab)) {
-    const { data } = await supabase
-      .from("groceries")
-      .select("*")
-      .eq("household_id", householdId)
-      .eq("list_type", activeTab)
-      .order("created_at", { ascending: false });
-    groceries = data ?? [];
+  if (activeTab === "lists") {
+    if (listsSubTab === "shopping" || listsSubTab === "inventory") {
+      const listType: ListType = listsSubTab;
+      const { data } = await supabase
+        .from("groceries")
+        .select("*")
+        .eq("household_id", householdId)
+        .eq("list_type", listType)
+        .order("created_at", { ascending: false });
+      groceries = data ?? [];
+    } else {
+      const [itemsResult, membersResult] = await Promise.all([
+        supabase
+          .from("packing_items")
+          .select("*")
+          .eq("household_id", householdId)
+          .or(`is_personal.eq.false,and(is_personal.eq.true,created_by.eq.${user.id})`)
+          .order("created_at", { ascending: false }),
+        supabase
+          .from("household_members")
+          .select("user_id")
+          .eq("household_id", householdId),
+      ]);
+      packingItems = itemsResult.data ?? [];
+      const memberUserIds = (membersResult.data ?? []).map((m: { user_id: string }) => m.user_id);
+
+      const itemIds = packingItems.map((i) => i.id);
+      const [checksResult, profilesResult] = await Promise.all([
+        itemIds.length > 0
+          ? supabase.from("packing_checks").select("item_id, user_id").in("item_id", itemIds)
+          : Promise.resolve({ data: [] as { item_id: string; user_id: string }[] }),
+        memberUserIds.length > 0
+          ? supabase.from("profiles").select("id, display_name").in("id", memberUserIds)
+          : Promise.resolve({ data: [] as { id: string; display_name: string }[] }),
+      ]);
+      packingChecks = (checksResult.data as { item_id: string; user_id: string }[] | null) ?? [];
+      packingMembers = ((profilesResult.data as { id: string; display_name: string }[] | null) ?? []).map((p) => ({
+        userId: p.id,
+        displayName: p.display_name,
+      }));
+    }
   } else if (activeTab === "recipes") {
     const [recipesResult, inventoryResult] = await Promise.all([
       supabase
@@ -71,7 +125,11 @@ export default async function Dashboard({
         .select("*, recipe_ingredients(*), recipe_instructions(*)")
         .eq("household_id", householdId)
         .order("created_at", { ascending: false }),
-      supabase.from("groceries").select("name").eq("household_id", householdId).eq("list_type", "inventory"),
+      supabase
+        .from("groceries")
+        .select("name")
+        .eq("household_id", householdId)
+        .eq("list_type", "inventory"),
     ]);
     recipes = recipesResult.data ?? [];
     inventoryNames = new Set(
@@ -111,20 +169,34 @@ export default async function Dashboard({
         {/* Tab switcher */}
         <TabSwitcher activeTab={activeTab} />
 
-        {isGroceryTab(activeTab) ? (
+        {activeTab === "lists" ? (
           <>
-            {/* Add grocery card */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4 sm:p-6 space-y-4">
-              <h2 className="text-lg font-semibold text-slate-700">Legg til vare</h2>
-              <AddGroceryForm listType={activeTab} />
-            </div>
+            {/* Lists sub-tab switcher */}
+            <ListsSubSwitcher activeSubTab={listsSubTab} />
 
-            {/* Grocery list card */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4 sm:p-6 space-y-6">
-              {activeTab === "shopping" ? (
-                <ShoppingList groceries={groceries} />
-              ) : (
-                <>
+            {listsSubTab === "shopping" ? (
+              <>
+                {/* Add grocery card */}
+                <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4 sm:p-6 space-y-4">
+                  <h2 className="text-lg font-semibold text-slate-700">Legg til vare</h2>
+                  <AddGroceryForm listType="shopping" />
+                </div>
+
+                {/* Shopping list card */}
+                <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4 sm:p-6 space-y-6">
+                  <ShoppingList groceries={groceries} />
+                </div>
+              </>
+            ) : listsSubTab === "inventory" ? (
+              <>
+                {/* Add grocery card */}
+                <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4 sm:p-6 space-y-4">
+                  <h2 className="text-lg font-semibold text-slate-700">Legg til vare</h2>
+                  <AddGroceryForm listType="inventory" />
+                </div>
+
+                {/* Inventory list card */}
+                <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4 sm:p-6 space-y-6">
                   <h2 className="text-lg font-semibold text-slate-700">Beholdning</h2>
                   {grouped.length === 0 ? (
                     <p className="text-slate-400 text-sm">
@@ -163,9 +235,28 @@ export default async function Dashboard({
                       </div>
                     ))
                   )}
-                </>
-              )}
-            </div>
+                </div>
+              </>
+            ) : (
+              <>
+                {/* Add packing item card */}
+                <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4 sm:p-6 space-y-4">
+                  <h2 className="text-lg font-semibold text-slate-700">Legg til element</h2>
+                  <AddPackingItemForm />
+                </div>
+
+                {/* Packing list card */}
+                <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4 sm:p-6 space-y-4">
+                  <h2 className="text-lg font-semibold text-slate-700">Pakkeliste</h2>
+                  <PackingList
+                    items={packingItems}
+                    checks={packingChecks}
+                    members={packingMembers}
+                    currentUserId={user.id}
+                  />
+                </div>
+              </>
+            )}
           </>
         ) : activeTab === "recipes" ? (
           <>

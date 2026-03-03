@@ -57,7 +57,29 @@ export interface Grocery {
   created_at: string;
 }
 
-export type DashboardTab = "shopping" | "inventory" | "recipes" | "training";
+export type DashboardTab = "lists" | "recipes" | "training";
+export type ListsSubTab = "shopping" | "inventory" | "packing";
+
+export interface PackingItem {
+  id: string;
+  household_id: string;
+  name: string;
+  is_personal: boolean;
+  created_by: string | null;
+  created_at: string;
+}
+
+export interface PackingCheck {
+  id: string;
+  item_id: string;
+  user_id: string;
+  created_at: string;
+}
+
+export interface PackingMember {
+  userId: string;
+  displayName: string;
+}
 
 export type StrengthLabel = "too_hard" | "ok" | "increase";
 export type TrainingSubTab = "running" | "strength";
