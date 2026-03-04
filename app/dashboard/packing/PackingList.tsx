@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import type { PackingItem, PackingMember } from "@/lib/types";
 import { deletePackingItem, togglePackingCheck } from "../actions";
 
@@ -15,19 +16,25 @@ export default function PackingList({
   members: PackingMember[];
   currentUserId: string;
 }) {
+  const router = useRouter();
   const [optimisticChecks, setOptimisticChecks] = useState<Set<string>>(
     () => new Set(checks.filter((c) => c.user_id === currentUserId).map((c) => c.item_id))
   );
-  const [, startTransition] = useTransition();
 
-  function handleToggle(itemId: string) {
+  useEffect(() => {
+    const interval = setInterval(() => router.refresh(), 15_000);
+    return () => clearInterval(interval);
+  }, [router]);
+
+  async function handleToggle(itemId: string) {
     const isChecked = optimisticChecks.has(itemId);
     setOptimisticChecks((prev) => {
       const next = new Set(prev);
       isChecked ? next.delete(itemId) : next.add(itemId);
       return next;
     });
-    startTransition(() => togglePackingCheck(itemId, isChecked));
+    await togglePackingCheck(itemId, isChecked);
+    router.refresh();
   }
 
   if (items.length === 0) {
@@ -36,24 +43,27 @@ export default function PackingList({
     );
   }
 
+  const enrichedItems = items
+    .map((item) => {
+      const checkedUserIds = new Set(
+        checks.filter((c) => c.item_id === item.id).map((c) => c.user_id)
+      );
+      if (optimisticChecks.has(item.id)) {
+        checkedUserIds.add(currentUserId);
+      } else {
+        checkedUserIds.delete(currentUserId);
+      }
+      const currentUserChecked = checkedUserIds.has(currentUserId);
+      const isComplete = item.is_personal
+        ? currentUserChecked
+        : members.every((m) => checkedUserIds.has(m.userId));
+      return { item, checkedUserIds, currentUserChecked, isComplete };
+    })
+    .sort((a, b) => Number(a.isComplete) - Number(b.isComplete));
+
   return (
     <ul className="divide-y divide-slate-100">
-      {items.map((item) => {
-        const checkedUserIds = new Set(
-          checks.filter((c) => c.item_id === item.id).map((c) => c.user_id)
-        );
-        if (optimisticChecks.has(item.id)) {
-          checkedUserIds.add(currentUserId);
-        } else {
-          checkedUserIds.delete(currentUserId);
-        }
-
-        const currentUserChecked = checkedUserIds.has(currentUserId);
-        const isComplete = item.is_personal
-          ? currentUserChecked
-          : members.every((m) => checkedUserIds.has(m.userId));
-
-        return (
+      {enrichedItems.map(({ item, checkedUserIds, currentUserChecked, isComplete }) => (
           <li key={item.id} className="flex items-center gap-3 py-2">
             <label className="flex items-center gap-2 cursor-pointer flex-1 min-w-0">
               <input
@@ -109,8 +119,7 @@ export default function PackingList({
               </form>
             </div>
           </li>
-        );
-      })}
+      ))}
     </ul>
   );
 }
