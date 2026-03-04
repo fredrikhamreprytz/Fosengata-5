@@ -60,9 +60,18 @@ export interface Grocery {
 export type DashboardTab = "lists" | "recipes" | "training";
 export type ListsSubTab = "shopping" | "inventory" | "packing";
 
+export interface PackingList {
+  id: string;
+  household_id: string;
+  name: string;
+  created_by: string | null;
+  created_at: string;
+}
+
 export interface PackingItem {
   id: string;
   household_id: string;
+  list_id: string;
   name: string;
   is_personal: boolean;
   created_by: string | null;

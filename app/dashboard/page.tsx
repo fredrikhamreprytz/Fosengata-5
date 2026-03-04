@@ -7,6 +7,7 @@ import type {
   ListsSubTab,
   ListType,
   PackingItem,
+  PackingList,
   PackingMember,
   Recipe,
   RunningWorkout,
@@ -28,12 +29,16 @@ import TrainingSubSwitcher from "./training/TrainingSubSwitcher";
 import AddStrengthWorkoutForm from "./training/AddStrengthWorkoutForm";
 import StrengthWorkoutList from "./training/StrengthWorkoutList";
 import AddPackingItemForm from "./packing/AddPackingItemForm";
-import PackingList from "./packing/PackingList";
+import PackingListItems from "./packing/PackingList";
+import PackingListSwitcher from "./packing/PackingListSwitcher";
+import UncheckAllButton from "./packing/UncheckAllButton";
+import DeletePackingListButton from "./packing/DeletePackingListButton";
+import RenamePackingListButton from "./packing/RenamePackingListButton";
 
 export default async function Dashboard({
   searchParams,
 }: {
-  searchParams: Promise<{ tab?: string; subtab?: string }>;
+  searchParams: Promise<{ tab?: string; subtab?: string; list?: string }>;
 }) {
   const supabase = await createClient();
 
@@ -52,7 +57,7 @@ export default async function Dashboard({
   const householdName = householdData.data?.name ?? "";
   const userName = profileData.data?.display_name ?? user.email ?? "";
 
-  const { tab, subtab } = await searchParams;
+  const { tab, subtab, list: listParam } = await searchParams;
 
   const activeTab: DashboardTab =
     tab === "lists" || tab === "recipes" || tab === "training" ? tab : "lists";
@@ -73,6 +78,8 @@ export default async function Dashboard({
   let runningWorkouts: RunningWorkout[] = [];
   let strengthWorkouts: StrengthWorkout[] = [];
   let inventoryNames = new Set<string>();
+  let packingLists: PackingList[] = [];
+  let activePackingList: PackingList | null = null;
   let packingItems: PackingItem[] = [];
   let packingChecks: { item_id: string; user_id: string }[] = [];
   let packingMembers: PackingMember[] = [];
@@ -88,35 +95,48 @@ export default async function Dashboard({
         .order("created_at", { ascending: false });
       groceries = data ?? [];
     } else {
-      const [itemsResult, membersResult] = await Promise.all([
-        supabase
-          .from("packing_items")
-          .select("*")
-          .eq("household_id", householdId)
-          .or(`is_personal.eq.false,and(is_personal.eq.true,created_by.eq.${user.id})`)
-          .order("created_at", { ascending: false }),
-        supabase
-          .from("household_members")
-          .select("user_id")
-          .eq("household_id", householdId),
-      ]);
-      packingItems = itemsResult.data ?? [];
-      const memberUserIds = (membersResult.data ?? []).map((m: { user_id: string }) => m.user_id);
+      const { data: listsData } = await supabase
+        .from("packing_lists")
+        .select("*")
+        .eq("household_id", householdId)
+        .order("created_at", { ascending: true });
+      packingLists = listsData ?? [];
 
-      const itemIds = packingItems.map((i) => i.id);
-      const [checksResult, profilesResult] = await Promise.all([
-        itemIds.length > 0
-          ? supabase.from("packing_checks").select("item_id, user_id").in("item_id", itemIds)
-          : Promise.resolve({ data: [] as { item_id: string; user_id: string }[] }),
-        memberUserIds.length > 0
-          ? supabase.from("profiles").select("id, display_name").in("id", memberUserIds)
-          : Promise.resolve({ data: [] as { id: string; display_name: string }[] }),
-      ]);
-      packingChecks = (checksResult.data as { item_id: string; user_id: string }[] | null) ?? [];
-      packingMembers = ((profilesResult.data as { id: string; display_name: string }[] | null) ?? []).map((p) => ({
-        userId: p.id,
-        displayName: p.display_name,
-      }));
+      activePackingList =
+        packingLists.find((l) => l.id === listParam) ?? packingLists[0] ?? null;
+
+      if (activePackingList) {
+        const [itemsResult, membersResult] = await Promise.all([
+          supabase
+            .from("packing_items")
+            .select("*")
+            .eq("list_id", activePackingList.id)
+            .eq("household_id", householdId)
+            .or(`is_personal.eq.false,and(is_personal.eq.true,created_by.eq.${user.id})`)
+            .order("created_at", { ascending: false }),
+          supabase
+            .from("household_members")
+            .select("user_id")
+            .eq("household_id", householdId),
+        ]);
+        packingItems = itemsResult.data ?? [];
+        const memberUserIds = (membersResult.data ?? []).map((m: { user_id: string }) => m.user_id);
+
+        const itemIds = packingItems.map((i) => i.id);
+        const [checksResult, profilesResult] = await Promise.all([
+          itemIds.length > 0
+            ? supabase.from("packing_checks").select("item_id, user_id").in("item_id", itemIds)
+            : Promise.resolve({ data: [] as { item_id: string; user_id: string }[] }),
+          memberUserIds.length > 0
+            ? supabase.from("profiles").select("id, display_name").in("id", memberUserIds)
+            : Promise.resolve({ data: [] as { id: string; display_name: string }[] }),
+        ]);
+        packingChecks = (checksResult.data as { item_id: string; user_id: string }[] | null) ?? [];
+        packingMembers = ((profilesResult.data as { id: string; display_name: string }[] | null) ?? []).map((p) => ({
+          userId: p.id,
+          displayName: p.display_name,
+        }));
+      }
     }
   } else if (activeTab === "recipes") {
     const [recipesResult, inventoryResult] = await Promise.all([
@@ -239,22 +259,43 @@ export default async function Dashboard({
               </>
             ) : (
               <>
-                {/* Add packing item card */}
-                <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4 sm:p-6 space-y-4">
-                  <h2 className="text-lg font-semibold text-slate-700">Legg til element</h2>
-                  <AddPackingItemForm />
-                </div>
+                {/* Packing list switcher */}
+                <PackingListSwitcher
+                  lists={packingLists}
+                  activeListId={activePackingList?.id ?? null}
+                />
 
-                {/* Packing list card */}
-                <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4 sm:p-6 space-y-4">
-                  <h2 className="text-lg font-semibold text-slate-700">Pakkeliste</h2>
-                  <PackingList
-                    items={packingItems}
-                    checks={packingChecks}
-                    members={packingMembers}
-                    currentUserId={user.id}
-                  />
-                </div>
+                {activePackingList ? (
+                  <>
+                    {/* Add packing item card */}
+                    <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4 sm:p-6 space-y-4">
+                      <h2 className="text-lg font-semibold text-slate-700">Legg til element</h2>
+                      <AddPackingItemForm listId={activePackingList.id} />
+                    </div>
+
+                    {/* Packing list card */}
+                    <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4 sm:p-6 space-y-4">
+                      <div className="flex items-center justify-between flex-wrap gap-2">
+                        <h2 className="text-lg font-semibold text-slate-700">{activePackingList.name}</h2>
+                        <div className="flex items-center gap-3">
+                          <RenamePackingListButton listId={activePackingList.id} currentName={activePackingList.name} />
+                          <UncheckAllButton listId={activePackingList.id} />
+                          <DeletePackingListButton listId={activePackingList.id} />
+                        </div>
+                      </div>
+                      <PackingListItems
+                        items={packingItems}
+                        checks={packingChecks}
+                        members={packingMembers}
+                        currentUserId={user.id}
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4 sm:p-6">
+                    <p className="text-slate-400 text-sm">Opprett en pakkeliste for å komme i gang.</p>
+                  </div>
+                )}
               </>
             )}
           </>

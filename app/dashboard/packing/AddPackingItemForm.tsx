@@ -3,7 +3,7 @@
 import { useActionState, useEffect, useRef, useState } from "react";
 import { addPackingItem } from "../actions";
 
-export default function AddPackingItemForm() {
+export default function AddPackingItemForm({ listId }: { listId: string }) {
   const [state, formAction, isPending] = useActionState(addPackingItem, {
     error: null,
   });
@@ -27,6 +27,7 @@ export default function AddPackingItemForm() {
           required
           className="flex-1 min-w-0 border border-slate-300 rounded-lg bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
         />
+        <input type="hidden" name="list_id" value={listId} />
         <input type="hidden" name="is_personal" value={String(isPersonal)} />
         <button
           type="button"

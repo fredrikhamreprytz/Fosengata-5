@@ -502,6 +502,82 @@ export async function deleteStrengthWorkout(formData: FormData) {
   revalidatePath("/dashboard");
 }
 
+export async function createPackingList(
+  _prevState: { error: string | null },
+  formData: FormData
+): Promise<{ error: string | null }> {
+  const supabase = await createClient();
+  const { user, householdId } = await getAuthAndHousehold(supabase);
+  if (!user) return { error: "Ikke autentisert." };
+  if (!householdId) return { error: "Ingen husstand funnet." };
+
+  const name = (formData.get("name") as string | null)?.trim();
+  if (!name) return { error: "Navn er påkrevd." };
+
+  const { error } = await supabase
+    .from("packing_lists")
+    .insert({ household_id: householdId, name, created_by: user.id });
+
+  if (error) return { error: "Kunne ikke opprette liste. Prøv igjen." };
+
+  revalidatePath("/dashboard");
+  return { error: null };
+}
+
+export async function renamePackingList(formData: FormData): Promise<void> {
+  const supabase = await createClient();
+  const { user, householdId } = await getAuthAndHousehold(supabase);
+  if (!user || !householdId) return;
+
+  const id = formData.get("id") as string | null;
+  const name = (formData.get("name") as string | null)?.trim();
+  if (!id || !name) return;
+
+  await supabase
+    .from("packing_lists")
+    .update({ name })
+    .eq("id", id)
+    .eq("household_id", householdId);
+
+  revalidatePath("/dashboard");
+}
+
+export async function deletePackingList(formData: FormData): Promise<void> {
+  const supabase = await createClient();
+  const { user, householdId } = await getAuthAndHousehold(supabase);
+  if (!user || !householdId) return;
+
+  const id = formData.get("id") as string | null;
+  if (!id) return;
+
+  await supabase
+    .from("packing_lists")
+    .delete()
+    .eq("id", id)
+    .eq("household_id", householdId);
+
+  revalidatePath("/dashboard");
+}
+
+export async function uncheckAllPackingItems(listId: string): Promise<void> {
+  const supabase = await createClient();
+  const { user, householdId } = await getAuthAndHousehold(supabase);
+  if (!user || !householdId) return;
+
+  const { data: items } = await supabase
+    .from("packing_items")
+    .select("id")
+    .eq("list_id", listId)
+    .eq("household_id", householdId);
+
+  const itemIds = (items ?? []).map((i: { id: string }) => i.id);
+  if (itemIds.length === 0) return;
+
+  await supabase.from("packing_checks").delete().in("item_id", itemIds);
+
+  revalidatePath("/dashboard");
+}
+
 export async function addPackingItem(
   _prevState: { error: string | null },
   formData: FormData
@@ -514,10 +590,12 @@ export async function addPackingItem(
   const name = (formData.get("name") as string | null)?.trim();
   if (!name) return { error: "Navn er påkrevd." };
   const isPersonal = formData.get("is_personal") === "true";
+  const listId = (formData.get("list_id") as string | null)?.trim();
+  if (!listId) return { error: "Ingen liste valgt." };
 
   const { error } = await supabase
     .from("packing_items")
-    .insert({ household_id: householdId, name, is_personal: isPersonal, created_by: user.id });
+    .insert({ household_id: householdId, list_id: listId, name, is_personal: isPersonal, created_by: user.id });
 
   if (error) return { error: "Kunne ikke legge til element. Prøv igjen." };
 
