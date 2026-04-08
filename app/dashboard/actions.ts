@@ -47,19 +47,19 @@ export async function addGrocery(
   if (!name) return { error: "Varenavn er påkrevd." };
 
   const validCategories = GROCERY_CATEGORIES.map((c) => c.value);
-  if (!category || !validCategories.includes(category as GroceryCategory)) {
-    return { error: "Ugyldig kategori." };
-  }
+  const resolvedCategory: GroceryCategory =
+    category && validCategories.includes(category as GroceryCategory)
+      ? (category as GroceryCategory)
+      : "unspecified";
 
-  const amount = parseFloat(amountRaw ?? "");
-  if (isNaN(amount) || amount <= 0) {
-    return { error: "Antall må være et positivt tall." };
-  }
+  const amountParsed = parseFloat(amountRaw ?? "");
+  const amount = !isNaN(amountParsed) && amountParsed > 0 ? amountParsed : 1;
 
   const validUnits = GROCERY_UNITS.map((u) => u.value);
-  if (!unit || !validUnits.includes(unit as GroceryUnit)) {
-    return { error: "Ugyldig enhet." };
-  }
+  const resolvedUnit: GroceryUnit =
+    unit && validUnits.includes(unit as GroceryUnit)
+      ? (unit as GroceryUnit)
+      : "stk";
 
   const validListTypes: ListType[] = ["shopping", "inventory"];
   const listType: ListType =
@@ -70,9 +70,9 @@ export async function addGrocery(
   const { error } = await supabase.from("groceries").insert({
     household_id: householdId,
     name,
-    category,
+    category: resolvedCategory,
     amount,
-    unit,
+    unit: resolvedUnit,
     list_type: listType,
   });
 

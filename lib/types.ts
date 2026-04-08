@@ -7,7 +7,8 @@ export type GroceryCategory =
   | "sauces"
   | "beverages"
   | "snacks"
-  | "household";
+  | "household"
+  | "unspecified";
 
 export const GROCERY_CATEGORIES: { value: GroceryCategory; label: string }[] =
   [
@@ -20,6 +21,7 @@ export const GROCERY_CATEGORIES: { value: GroceryCategory; label: string }[] =
     { value: "beverages", label: "Drikke" },
     { value: "snacks", label: "Snacks og godterier" },
     { value: "household", label: "Renhold og hygiene" },
+    { value: "unspecified", label: "Ukategorisert" },
   ];
 
 export type GroceryUnit = "stk" | "kg" | "g" | "l" | "ml" | "pak";
