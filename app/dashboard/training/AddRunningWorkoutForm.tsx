@@ -64,7 +64,7 @@ function StepFields({
   removable: boolean;
 }) {
   const inputClass =
-    "border border-slate-300 rounded-lg px-2 py-1.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500";
+    "border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 px-2 py-1.5 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500";
 
   function handleSpeedChange(value: string) {
     const num = parseFloat(value);
@@ -101,7 +101,7 @@ function StepFields({
           <button
             type="button"
             onClick={onDuplicate}
-            className="text-xs text-slate-400 hover:text-slate-600 transition"
+            className="text-xs text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition"
             aria-label="Dupliser steg"
           >
             Dupliser
@@ -110,7 +110,7 @@ function StepFields({
             <button
               type="button"
               onClick={onRemove}
-              className="text-slate-400 hover:text-red-500 transition text-lg leading-none"
+              className="text-slate-400 dark:text-slate-500 hover:text-red-500 transition text-lg leading-none"
               aria-label="Fjern steg"
             >
               ×
@@ -129,7 +129,7 @@ function StepFields({
             min="0"
             className={`w-14 ${inputClass}`}
           />
-          <span className="text-xs text-slate-500">min</span>
+          <span className="text-xs text-slate-500 dark:text-slate-400">min</span>
           <input
             type="number"
             value={step.duration_seconds}
@@ -139,7 +139,7 @@ function StepFields({
             max="59"
             className={`w-14 ${inputClass}`}
           />
-          <span className="text-xs text-slate-500">sek</span>
+          <span className="text-xs text-slate-500 dark:text-slate-400">sek</span>
         </div>
         {/* Distance */}
         <div className="flex items-center gap-1">
@@ -152,7 +152,7 @@ function StepFields({
             step="0.01"
             className={`w-16 ${inputClass}`}
           />
-          <span className="text-xs text-slate-500">km</span>
+          <span className="text-xs text-slate-500 dark:text-slate-400">km</span>
         </div>
         {/* Speed km/h */}
         <div className="flex items-center gap-1">
@@ -165,7 +165,7 @@ function StepFields({
             step="0.1"
             className={`w-16 ${inputClass}`}
           />
-          <span className="text-xs text-slate-500">km/t</span>
+          <span className="text-xs text-slate-500 dark:text-slate-400">km/t</span>
         </div>
         {/* Pace min/km */}
         <div className="flex items-center gap-1">
@@ -177,7 +177,7 @@ function StepFields({
             min="0"
             className={`w-12 ${inputClass}`}
           />
-          <span className="text-xs text-slate-500">:</span>
+          <span className="text-xs text-slate-500 dark:text-slate-400">:</span>
           <input
             type="number"
             value={step.pace_sec}
@@ -187,7 +187,7 @@ function StepFields({
             max="59"
             className={`w-12 ${inputClass}`}
           />
-          <span className="text-xs text-slate-500">min/km</span>
+          <span className="text-xs text-slate-500 dark:text-slate-400">min/km</span>
         </div>
         {/* Incline */}
         <div className="flex items-center gap-1">
@@ -200,7 +200,7 @@ function StepFields({
             step="0.5"
             className={`w-14 ${inputClass}`}
           />
-          <span className="text-xs text-slate-500">%</span>
+          <span className="text-xs text-slate-500 dark:text-slate-400">%</span>
         </div>
       </div>
     </div>
@@ -361,23 +361,23 @@ export default function AddRunningWorkoutForm() {
         value={name}
         onChange={(e) => setName(e.target.value)}
         placeholder="Navn på økt"
-        className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+        className="w-full border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 px-3 py-2 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
       />
 
       {/* Warmup */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-slate-600">Oppvarming</h3>
+          <h3 className="text-sm font-semibold text-slate-600 dark:text-slate-300">Oppvarming</h3>
           <button
             type="button"
             onClick={toggleWarmup}
-            className="text-xs text-slate-500 hover:text-slate-700 transition underline"
+            className="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition underline"
           >
             {showWarmup ? "Fjern oppvarming" : "Legg til oppvarming"}
           </button>
         </div>
         {showWarmup && (
-          <div className="space-y-3 pl-3 border-l-2 border-slate-100">
+          <div className="space-y-3 pl-3 border-l-2 border-slate-100 dark:border-slate-700">
             {warmupSteps.map((step) => (
               <StepFields
                 key={step.key}
@@ -392,7 +392,7 @@ export default function AddRunningWorkoutForm() {
             <button
               type="button"
               onClick={() => setWarmupSteps((prev) => [...prev, makeStep("warmup")])}
-              className="text-xs text-slate-500 hover:text-slate-700 transition underline"
+              className="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition underline"
             >
               Legg til steg
             </button>
@@ -402,9 +402,9 @@ export default function AddRunningWorkoutForm() {
 
       {/* Main */}
       <div className="space-y-3">
-        <h3 className="text-sm font-semibold text-slate-600">Hovedøkt</h3>
+        <h3 className="text-sm font-semibold text-slate-600 dark:text-slate-300">Hovedøkt</h3>
         {mainSteps.length > 0 && (
-          <div className="space-y-3 pl-3 border-l-2 border-slate-100">
+          <div className="space-y-3 pl-3 border-l-2 border-slate-100 dark:border-slate-700">
             {mainSteps.map((step) => (
               <StepFields
                 key={step.key}
@@ -421,7 +421,7 @@ export default function AddRunningWorkoutForm() {
         <button
           type="button"
           onClick={addInterval}
-          className="text-sm text-slate-500 hover:text-slate-700 transition underline"
+          className="text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition underline"
         >
           Legg til intervall
         </button>
@@ -430,17 +430,17 @@ export default function AddRunningWorkoutForm() {
       {/* Cooldown */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-slate-600">Nedkjøling</h3>
+          <h3 className="text-sm font-semibold text-slate-600 dark:text-slate-300">Nedkjøling</h3>
           <button
             type="button"
             onClick={toggleCooldown}
-            className="text-xs text-slate-500 hover:text-slate-700 transition underline"
+            className="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition underline"
           >
             {showCooldown ? "Fjern nedkjøling" : "Legg til nedkjøling"}
           </button>
         </div>
         {showCooldown && (
-          <div className="space-y-3 pl-3 border-l-2 border-slate-100">
+          <div className="space-y-3 pl-3 border-l-2 border-slate-100 dark:border-slate-700">
             {cooldownSteps.map((step) => (
               <StepFields
                 key={step.key}
@@ -455,7 +455,7 @@ export default function AddRunningWorkoutForm() {
             <button
               type="button"
               onClick={() => setCooldownSteps((prev) => [...prev, makeStep("cooldown")])}
-              className="text-xs text-slate-500 hover:text-slate-700 transition underline"
+              className="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition underline"
             >
               Legg til steg
             </button>

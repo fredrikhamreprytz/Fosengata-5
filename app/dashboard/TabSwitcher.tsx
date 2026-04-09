@@ -13,7 +13,7 @@ export default function TabSwitcher({ activeTab }: { activeTab: DashboardTab }) 
   const router = useRouter();
 
   return (
-    <div className="flex gap-1 bg-slate-100 rounded-xl p-1">
+    <div className="flex gap-1 bg-slate-100 dark:bg-slate-700 rounded-xl p-1">
       {TABS.map((tab) => {
         const isActive = tab.value === activeTab;
         return (
@@ -23,7 +23,7 @@ export default function TabSwitcher({ activeTab }: { activeTab: DashboardTab }) 
             className={`flex-1 px-2 py-2 text-xs sm:px-4 sm:text-sm font-medium rounded-lg transition ${
               isActive
                 ? "bg-emerald-600 text-white"
-                : "text-slate-500 hover:text-slate-700"
+                : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
             }`}
           >
             {tab.label}

@@ -181,7 +181,7 @@ export default async function Dashboard({
   })).filter((cat) => cat.items.length > 0);
 
   return (
-    <main className="min-h-screen bg-slate-50 p-3 sm:p-6">
+    <main className="min-h-screen bg-slate-50 dark:bg-slate-900 p-3 sm:p-6">
       <div className="max-w-3xl mx-auto space-y-6">
         {/* Header */}
         <Header householdName={householdName} userName={userName} />
@@ -197,46 +197,46 @@ export default async function Dashboard({
             {listsSubTab === "shopping" ? (
               <>
                 {/* Add grocery card */}
-                <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4 sm:p-6 space-y-4">
-                  <h2 className="text-lg font-semibold text-slate-700">Legg til vare</h2>
+                <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-4 sm:p-6 space-y-4">
+                  <h2 className="text-lg font-semibold text-slate-700 dark:text-slate-200">Legg til vare</h2>
                   <AddGroceryForm listType="shopping" />
                 </div>
 
                 {/* Shopping list card */}
-                <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4 sm:p-6 space-y-6">
+                <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-4 sm:p-6 space-y-6">
                   <ShoppingList groceries={groceries} />
                 </div>
               </>
             ) : listsSubTab === "inventory" ? (
               <>
                 {/* Add grocery card */}
-                <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4 sm:p-6 space-y-4">
-                  <h2 className="text-lg font-semibold text-slate-700">Legg til vare</h2>
+                <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-4 sm:p-6 space-y-4">
+                  <h2 className="text-lg font-semibold text-slate-700 dark:text-slate-200">Legg til vare</h2>
                   <AddGroceryForm listType="inventory" />
                 </div>
 
                 {/* Inventory list card */}
-                <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4 sm:p-6 space-y-6">
-                  <h2 className="text-lg font-semibold text-slate-700">Beholdning</h2>
+                <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-4 sm:p-6 space-y-6">
+                  <h2 className="text-lg font-semibold text-slate-700 dark:text-slate-200">Beholdning</h2>
                   {grouped.length === 0 ? (
-                    <p className="text-slate-400 text-sm">
+                    <p className="text-slate-400 dark:text-slate-500 text-sm">
                       Ingen varer i beholdningen ennå.
                     </p>
                   ) : (
                     grouped.map((cat) => (
                       <div key={cat.value}>
-                        <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-400 mb-2">
+                        <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-2">
                           {cat.label}
                         </h3>
-                        <ul className="divide-y divide-slate-100">
+                        <ul className="divide-y divide-slate-100 dark:divide-slate-700">
                           {cat.items.map((item) => (
                             <li
                               key={item.id}
                               className="flex items-center justify-between py-2"
                             >
-                              <span className="text-sm text-slate-800">
+                              <span className="text-sm text-slate-800 dark:text-slate-100">
                                 {item.name}
-                                <span className="ml-2 text-slate-400">
+                                <span className="ml-2 text-slate-400 dark:text-slate-500">
                                   {item.amount} {item.unit}
                                 </span>
                               </span>
@@ -268,15 +268,15 @@ export default async function Dashboard({
                 {activePackingList ? (
                   <>
                     {/* Add packing item card */}
-                    <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4 sm:p-6 space-y-4">
-                      <h2 className="text-lg font-semibold text-slate-700">Legg til element</h2>
+                    <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-4 sm:p-6 space-y-4">
+                      <h2 className="text-lg font-semibold text-slate-700 dark:text-slate-200">Legg til element</h2>
                       <AddPackingItemForm listId={activePackingList.id} />
                     </div>
 
                     {/* Packing list card */}
-                    <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4 sm:p-6 space-y-4">
+                    <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-4 sm:p-6 space-y-4">
                       <div className="flex items-center justify-between flex-wrap gap-2">
-                        <h2 className="text-lg font-semibold text-slate-700">{activePackingList.name}</h2>
+                        <h2 className="text-lg font-semibold text-slate-700 dark:text-slate-200">{activePackingList.name}</h2>
                         <div className="flex items-center gap-3">
                           <RenamePackingListButton listId={activePackingList.id} currentName={activePackingList.name} />
                           <UncheckAllButton listId={activePackingList.id} />
@@ -293,7 +293,7 @@ export default async function Dashboard({
                   </>
                 ) : (
                   <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4 sm:p-6">
-                    <p className="text-slate-400 text-sm">Opprett en pakkeliste for å komme i gang.</p>
+                    <p className="text-slate-400 dark:text-slate-500 text-sm">Opprett en pakkeliste for å komme i gang.</p>
                   </div>
                 )}
               </>
@@ -302,14 +302,14 @@ export default async function Dashboard({
         ) : activeTab === "recipes" ? (
           <>
             {/* Add recipe card */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4 sm:p-6 space-y-4">
-              <h2 className="text-lg font-semibold text-slate-700">Legg til oppskrift</h2>
+            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-4 sm:p-6 space-y-4">
+              <h2 className="text-lg font-semibold text-slate-700 dark:text-slate-200">Legg til oppskrift</h2>
               <AddRecipeForm />
             </div>
 
             {/* Recipe list card */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4 sm:p-6 space-y-4">
-              <h2 className="text-lg font-semibold text-slate-700">Oppskrifter</h2>
+            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-4 sm:p-6 space-y-4">
+              <h2 className="text-lg font-semibold text-slate-700 dark:text-slate-200">Oppskrifter</h2>
               <RecipeList recipes={recipes} inventoryNames={inventoryNames} />
             </div>
           </>
@@ -321,28 +321,28 @@ export default async function Dashboard({
             {trainingSubTab === "running" ? (
               <>
                 {/* Add running workout card */}
-                <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4 sm:p-6 space-y-4">
-                  <h2 className="text-lg font-semibold text-slate-700">Legg til løpeøkt</h2>
+                <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-4 sm:p-6 space-y-4">
+                  <h2 className="text-lg font-semibold text-slate-700 dark:text-slate-200">Legg til løpeøkt</h2>
                   <AddRunningWorkoutForm />
                 </div>
 
                 {/* Running workout list card */}
-                <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4 sm:p-6 space-y-4">
-                  <h2 className="text-lg font-semibold text-slate-700">Løpeøkter</h2>
+                <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-4 sm:p-6 space-y-4">
+                  <h2 className="text-lg font-semibold text-slate-700 dark:text-slate-200">Løpeøkter</h2>
                   <RunningWorkoutList workouts={runningWorkouts} />
                 </div>
               </>
             ) : (
               <>
                 {/* Add strength workout card */}
-                <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4 sm:p-6 space-y-4">
-                  <h2 className="text-lg font-semibold text-slate-700">Legg til styrkeøkt</h2>
+                <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-4 sm:p-6 space-y-4">
+                  <h2 className="text-lg font-semibold text-slate-700 dark:text-slate-200">Legg til styrkeøkt</h2>
                   <AddStrengthWorkoutForm />
                 </div>
 
                 {/* Strength workout list card */}
-                <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4 sm:p-6 space-y-4">
-                  <h2 className="text-lg font-semibold text-slate-700">Styrkeøkter</h2>
+                <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-4 sm:p-6 space-y-4">
+                  <h2 className="text-lg font-semibold text-slate-700 dark:text-slate-200">Styrkeøkter</h2>
                   <StrengthWorkoutList workouts={strengthWorkouts} />
                 </div>
               </>

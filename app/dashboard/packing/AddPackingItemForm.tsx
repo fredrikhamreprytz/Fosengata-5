@@ -25,7 +25,7 @@ export default function AddPackingItemForm({ listId }: { listId: string }) {
           name="name"
           placeholder="Elementnavn"
           required
-          className="flex-1 min-w-0 border border-slate-300 rounded-lg bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          className="flex-1 min-w-0 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
         />
         <input type="hidden" name="list_id" value={listId} />
         <input type="hidden" name="is_personal" value={String(isPersonal)} />
@@ -35,7 +35,7 @@ export default function AddPackingItemForm({ listId }: { listId: string }) {
           className={`shrink-0 px-3 py-2 text-sm rounded-lg border font-medium transition ${
             isPersonal
               ? "bg-emerald-600 text-white border-emerald-600"
-              : "bg-white text-slate-500 border-slate-300 hover:border-slate-400"
+              : "bg-white dark:bg-slate-700 text-slate-500 dark:text-slate-400 border-slate-300 dark:border-slate-600 hover:border-slate-400"
           }`}
         >
           Kun for meg

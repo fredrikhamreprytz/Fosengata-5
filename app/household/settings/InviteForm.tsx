@@ -11,7 +11,7 @@ export default function InviteForm({ householdId }: { householdId: string }) {
       <input type="hidden" name="household_id" value={householdId} />
 
       {state.error && (
-        <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{state.error}</p>
+        <p className="text-sm text-red-600 bg-red-50 dark:bg-red-900/20 rounded-lg px-3 py-2">{state.error}</p>
       )}
 
       <div className="flex gap-2">
@@ -20,7 +20,7 @@ export default function InviteForm({ householdId }: { householdId: string }) {
           type="email"
           required
           placeholder="e-postadresse"
-          className="flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          className="flex-1 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 dark:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
         />
         <button
           type="submit"

@@ -34,8 +34,8 @@ function StepRow({ step }: { step: RunningStep }) {
     <div
       className={`text-sm px-3 py-1.5 rounded-lg ${
         step.is_recovery
-          ? "bg-blue-50 text-blue-700"
-          : "bg-orange-50 text-orange-700"
+          ? "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
+          : "bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300"
       }`}
     >
       <span className="text-xs font-medium uppercase tracking-wide opacity-60 mr-2">
@@ -72,13 +72,13 @@ function PhaseSection({
         onClick={() => setIsOpen((prev) => !prev)}
         className="flex items-center gap-2 w-full text-left"
       >
-        <span className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+        <span className="text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">
           {label}
         </span>
         {summary.length > 0 && (
-          <span className="text-xs text-slate-400">{summary.join(" · ")}</span>
+          <span className="text-xs text-slate-400 dark:text-slate-500">{summary.join(" · ")}</span>
         )}
-        <span className="text-slate-300 text-xs ml-auto">{isOpen ? "▲" : "▼"}</span>
+        <span className="text-slate-300 dark:text-slate-600 text-xs ml-auto">{isOpen ? "▲" : "▼"}</span>
       </button>
       {isOpen && (
         <div className="space-y-1">
@@ -104,24 +104,24 @@ function RunningWorkoutCard({ workout }: { workout: RunningWorkout }) {
   );
 
   return (
-    <div className="border border-slate-100 rounded-xl overflow-hidden">
+    <div className="border border-slate-100 dark:border-slate-700 rounded-xl overflow-hidden">
       <button
         type="button"
         onClick={() => {
           setIsOpen((prev) => !prev);
           setIsEditing(false);
         }}
-        className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-slate-50 transition"
+        className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-slate-50 dark:hover:bg-slate-700 transition"
       >
-        <span className="text-sm font-medium text-slate-800">{workout.name}</span>
-        <span className="text-slate-400 text-xs">
+        <span className="text-sm font-medium text-slate-800 dark:text-slate-100">{workout.name}</span>
+        <span className="text-slate-400 dark:text-slate-500 text-xs">
           {totalSeconds > 0 && <span className="mr-2">{formatDuration(totalSeconds)}</span>}
           {isOpen ? "▲" : "▼"}
         </span>
       </button>
 
       {isOpen && (
-        <div className="px-4 pb-4 border-t border-slate-100 pt-3 space-y-4">
+        <div className="px-4 pb-4 border-t border-slate-100 dark:border-slate-700 pt-3 space-y-4">
           {isEditing ? (
             <EditRunningWorkoutForm
               workout={workout}
@@ -166,7 +166,7 @@ export default function RunningWorkoutList({
 }) {
   if (workouts.length === 0) {
     return (
-      <p className="text-slate-400 text-sm">Ingen løpeøkter lagt til ennå.</p>
+      <p className="text-slate-400 dark:text-slate-500 text-sm">Ingen løpeøkter lagt til ennå.</p>
     );
   }
 

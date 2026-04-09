@@ -38,12 +38,12 @@ export default function ShoppingList({ groceries }: { groceries: Grocery[] }) {
       {/* Header row */}
       <div className="flex items-center justify-between flex-wrap gap-y-2">
         <div className="flex items-center gap-2">
-          <h2 className="text-lg font-semibold text-slate-700">Handleliste</h2>
+          <h2 className="text-lg font-semibold text-slate-700 dark:text-slate-200">Handleliste</h2>
           <span
             className={`text-xs font-medium px-2 py-0.5 rounded-full ${
               isReady
-                ? "bg-green-100 text-green-700"
-                : "bg-slate-100 text-slate-500"
+                ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
+                : "bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400"
             }`}
           >
             {isReady ? "Klar" : "Utkast"}
@@ -54,7 +54,7 @@ export default function ShoppingList({ groceries }: { groceries: Grocery[] }) {
           <button
             type="button"
             onClick={toggleReady}
-            className="text-xs text-slate-500 hover:text-slate-700 transition"
+            className="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition"
           >
             {isReady ? "Sett til utkast" : "Sett til klar"}
           </button>
@@ -63,15 +63,15 @@ export default function ShoppingList({ groceries }: { groceries: Grocery[] }) {
 
       {/* List */}
       {grouped.length === 0 ? (
-        <p className="text-slate-400 text-sm">Ingen varer på handlelisten ennå.</p>
+        <p className="text-slate-400 dark:text-slate-500 text-sm">Ingen varer på handlelisten ennå.</p>
       ) : (
         <div className="space-y-6">
           {grouped.map((cat) => (
             <div key={cat.value}>
-              <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-400 mb-2">
+              <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-2">
                 {cat.label}
               </h3>
-              <ul className="divide-y divide-slate-100">
+              <ul className="divide-y divide-slate-100 dark:divide-slate-700">
                 {cat.items.map((item) => (
                   <li key={item.id} className="flex items-center justify-between py-2">
                     {isReady ? (
@@ -82,18 +82,18 @@ export default function ShoppingList({ groceries }: { groceries: Grocery[] }) {
                           onChange={() => handleCheck(item.id)}
                           className="accent-green-600 w-4 h-4"
                         />
-                        <span className="text-sm text-slate-800">
+                        <span className="text-sm text-slate-800 dark:text-slate-100">
                           {item.name}
-                          <span className="ml-2 text-slate-400">
+                          <span className="ml-2 text-slate-400 dark:text-slate-500">
                             {item.amount} {item.unit}
                           </span>
                         </span>
                       </label>
                     ) : (
                       <>
-                        <span className="text-sm text-slate-800">
+                        <span className="text-sm text-slate-800 dark:text-slate-100">
                           {item.name}
-                          <span className="ml-2 text-slate-400">
+                          <span className="ml-2 text-slate-400 dark:text-slate-500">
                             {item.amount} {item.unit}
                           </span>
                         </span>

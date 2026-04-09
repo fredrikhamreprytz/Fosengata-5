@@ -44,10 +44,10 @@ const LABEL_OPTIONS: { value: StrengthLabel; label: string }[] = [
 ];
 
 function labelButtonClass(value: StrengthLabel, active: boolean): string {
-  if (!active) return "border border-slate-200 text-slate-500 hover:border-slate-300 transition";
-  if (value === "too_hard") return "border border-red-300 bg-red-50 text-red-700";
-  if (value === "increase") return "border border-green-300 bg-green-50 text-green-700";
-  return "border border-slate-300 bg-slate-100 text-slate-700";
+  if (!active) return "border border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400 hover:border-slate-300 transition";
+  if (value === "too_hard") return "border border-red-300 bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400";
+  if (value === "increase") return "border border-green-300 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400";
+  return "border border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200";
 }
 
 function ExerciseRow({
@@ -62,7 +62,7 @@ function ExerciseRow({
   onRemove: () => void;
 }) {
   const inputClass =
-    "border border-slate-300 rounded-lg px-2 py-1.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500";
+    "border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 px-2 py-1.5 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500";
 
   return (
     <div className="space-y-2">
@@ -97,7 +97,7 @@ function ExerciseRow({
           min="1"
           className={`w-14 ${inputClass}`}
         />
-        <span className="text-xs text-slate-400">sett</span>
+        <span className="text-xs text-slate-400 dark:text-slate-500">sett</span>
         <input
           type="number"
           value={exercise.reps}
@@ -106,7 +106,7 @@ function ExerciseRow({
           min="1"
           className={`w-14 ${inputClass}`}
         />
-        <span className="text-xs text-slate-400">reps</span>
+        <span className="text-xs text-slate-400 dark:text-slate-500">reps</span>
         <input
           type="text"
           inputMode="decimal"
@@ -115,7 +115,7 @@ function ExerciseRow({
           placeholder="0"
           className={`w-14 ${inputClass}`}
         />
-        <span className="text-xs text-slate-400">kg</span>
+        <span className="text-xs text-slate-400 dark:text-slate-500">kg</span>
       </div>
       {/* Row 2b: label buttons */}
       <div className="flex gap-1">
@@ -216,10 +216,10 @@ export default function EditStrengthWorkoutForm({
         value={name}
         onChange={(e) => setName(e.target.value)}
         placeholder="Navn på økt"
-        className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+        className="w-full border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 px-3 py-2 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
       />
 
-      <div className="space-y-4 pl-3 border-l-2 border-emerald-100">
+      <div className="space-y-4 pl-3 border-l-2 border-emerald-100 dark:border-emerald-900/40">
         {exercises.map((ex) => (
           <ExerciseRow
             key={ex.key}
@@ -232,7 +232,7 @@ export default function EditStrengthWorkoutForm({
         <button
           type="button"
           onClick={() => setExercises((prev) => [...prev, makeExercise()])}
-          className="text-sm text-slate-500 hover:text-slate-700 transition underline"
+          className="text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition underline"
         >
           Legg til øvelse
         </button>

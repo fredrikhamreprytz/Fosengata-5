@@ -8,7 +8,7 @@ export default function JoinRequestForm() {
 
   if (state.success) {
     return (
-      <p className="text-sm text-green-600 bg-green-50 rounded-lg px-3 py-2 text-center">
+      <p className="text-sm text-green-600 bg-green-50 dark:bg-green-900/20 rounded-lg px-3 py-2 text-center">
         Forespørsel sendt! Eieren av husstanden vil se den i innstillingene.
       </p>
     );
@@ -17,7 +17,7 @@ export default function JoinRequestForm() {
   return (
     <form action={formAction} className="space-y-3">
       {state.error && (
-        <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{state.error}</p>
+        <p className="text-sm text-red-600 bg-red-50 dark:bg-red-900/20 rounded-lg px-3 py-2">{state.error}</p>
       )}
       <div className="flex gap-2">
         <input
@@ -25,7 +25,7 @@ export default function JoinRequestForm() {
           type="text"
           required
           placeholder="Husstandsnavn"
-          className="flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          className="flex-1 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 dark:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
         />
         <button
           type="submit"

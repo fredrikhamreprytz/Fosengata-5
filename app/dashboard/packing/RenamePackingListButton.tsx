@@ -34,7 +34,7 @@ export default function RenamePackingListButton({
           defaultValue={currentName}
           required
           autoFocus
-          className="border border-slate-300 rounded-lg px-2 py-1 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 w-40"
+          className="border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 px-2 py-1 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 w-40"
         />
         <button
           type="submit"
@@ -46,7 +46,7 @@ export default function RenamePackingListButton({
         <button
           type="button"
           onClick={() => setEditing(false)}
-          className="text-xs text-slate-400 hover:text-slate-600 transition"
+          className="text-xs text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition"
         >
           Avbryt
         </button>
@@ -58,7 +58,7 @@ export default function RenamePackingListButton({
     <button
       type="button"
       onClick={() => setEditing(true)}
-      className="text-xs text-slate-400 hover:text-slate-600 transition"
+      className="text-xs text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition"
     >
       Gi nytt navn
     </button>

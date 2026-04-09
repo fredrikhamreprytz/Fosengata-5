@@ -26,7 +26,7 @@ export default function AddGroceryForm({ listType }: { listType: ListType }) {
           name="name"
           placeholder="Varenavn"
           required
-          className="border border-slate-300 rounded-lg bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          className="border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
         />
 
         <select
@@ -48,7 +48,7 @@ export default function AddGroceryForm({ listType }: { listType: ListType }) {
           defaultValue="1"
           min="0.01"
           step="any"
-          className="border border-slate-300 rounded-lg bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          className="border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
         />
 
         <select

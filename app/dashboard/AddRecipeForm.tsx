@@ -90,12 +90,12 @@ export default function AddRecipeForm() {
         value={name}
         onChange={(e) => setName(e.target.value)}
         placeholder="Navn på oppskrift"
-        className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+        className="w-full border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 px-3 py-2 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
       />
 
       {/* Ingredients */}
       <div className="space-y-3">
-        <h3 className="text-sm font-semibold text-slate-600">Ingredienser</h3>
+        <h3 className="text-sm font-semibold text-slate-600 dark:text-slate-300">Ingredienser</h3>
         {ingredients.map((ing) => (
           <div key={ing.key} className="space-y-2">
             <div className="flex gap-2 items-center">
@@ -104,12 +104,12 @@ export default function AddRecipeForm() {
                 value={ing.name}
                 onChange={(e) => updateIngredient(ing.key, { name: e.target.value })}
                 placeholder="Navn"
-                className="flex-1 border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="flex-1 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 px-3 py-2 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
               <button
                 type="button"
                 onClick={() => removeIngredient(ing.key)}
-                className="px-2 py-2 text-gray-400 hover:text-red-500 transition text-lg leading-none"
+                className="px-2 py-2 text-slate-400 dark:text-slate-500 hover:text-red-500 transition text-lg leading-none"
                 aria-label="Fjern ingrediens"
               >
                 ×
@@ -123,12 +123,12 @@ export default function AddRecipeForm() {
                 placeholder="Antall"
                 min="0"
                 step="any"
-                className="w-20 border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-20 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 px-3 py-2 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
               <select
                 value={ing.unit}
                 onChange={(e) => updateIngredient(ing.key, { unit: e.target.value as RecipeUnit })}
-                className="flex-1 border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="flex-1 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 px-3 py-2 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
               >
                 {RECIPE_UNITS.map((u) => (
                   <option key={u.value} value={u.value}>{u.label}</option>
@@ -137,7 +137,7 @@ export default function AddRecipeForm() {
               <select
                 value={ing.category}
                 onChange={(e) => updateIngredient(ing.key, { category: e.target.value as GroceryCategory })}
-                className="flex-1 border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="flex-1 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 px-3 py-2 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
               >
                 {GROCERY_CATEGORIES.map((c) => (
                   <option key={c.value} value={c.value}>{c.label}</option>
@@ -149,7 +149,7 @@ export default function AddRecipeForm() {
         <button
           type="button"
           onClick={() => setIngredients((prev) => [...prev, makeIngredient()])}
-          className="text-sm text-slate-500 hover:text-slate-700 transition underline"
+          className="text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition underline"
         >
           Legg til ingrediens
         </button>
@@ -157,21 +157,21 @@ export default function AddRecipeForm() {
 
       {/* Instructions */}
       <div className="space-y-3">
-        <h3 className="text-sm font-semibold text-slate-600">Fremgangsmåte</h3>
+        <h3 className="text-sm font-semibold text-slate-600 dark:text-slate-300">Fremgangsmåte</h3>
         {instructions.map((step, index) => (
           <div key={index} className="flex gap-2 items-start">
-            <span className="text-sm text-slate-500 mt-2 min-w-14">Steg {index + 1}:</span>
+            <span className="text-sm text-slate-500 dark:text-slate-400 mt-2 min-w-14">Steg {index + 1}:</span>
             <textarea
               value={step}
               onChange={(e) => updateInstruction(index, e.target.value)}
               placeholder={`Beskriv steg ${index + 1}`}
               rows={2}
-              className="flex-1 border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none"
+              className="flex-1 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 px-3 py-2 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none"
             />
             <button
               type="button"
               onClick={() => removeInstruction(index)}
-              className="px-2 py-2 text-gray-400 hover:text-red-500 transition text-lg leading-none mt-1"
+              className="px-2 py-2 text-slate-400 dark:text-slate-500 hover:text-red-500 transition text-lg leading-none mt-1"
               aria-label="Fjern steg"
             >
               ×
@@ -181,7 +181,7 @@ export default function AddRecipeForm() {
         <button
           type="button"
           onClick={() => setInstructions((prev) => [...prev, ""])}
-          className="text-sm text-slate-500 hover:text-slate-700 transition underline"
+          className="text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition underline"
         >
           Legg til steg
         </button>

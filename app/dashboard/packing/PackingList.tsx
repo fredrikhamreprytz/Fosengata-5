@@ -39,7 +39,7 @@ export default function PackingList({
 
   if (items.length === 0) {
     return (
-      <p className="text-slate-400 text-sm">Ingen elementer på pakkelisten ennå.</p>
+      <p className="text-slate-400 dark:text-slate-500 text-sm">Ingen elementer på pakkelisten ennå.</p>
     );
   }
 
@@ -62,7 +62,7 @@ export default function PackingList({
     .sort((a, b) => Number(a.isComplete) - Number(b.isComplete));
 
   return (
-    <ul className="divide-y divide-slate-100">
+    <ul className="divide-y divide-slate-100 dark:divide-slate-700">
       {enrichedItems.map(({ item, checkedUserIds, currentUserChecked, isComplete }) => (
           <li key={item.id} className="flex items-center gap-3 py-2">
             <label className="flex items-center gap-2 cursor-pointer flex-1 min-w-0">
@@ -74,7 +74,7 @@ export default function PackingList({
               />
               <span
                 className={`text-sm truncate ${
-                  isComplete ? "line-through text-slate-400" : "text-slate-800"
+                  isComplete ? "line-through text-slate-400 dark:text-slate-500" : "text-slate-800 dark:text-slate-100"
                 }`}
               >
                 {item.name}
@@ -83,7 +83,7 @@ export default function PackingList({
 
             <div className="flex items-center gap-2 shrink-0">
               {item.is_personal ? (
-                <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 font-medium">
+                <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 font-medium">
                   Kun deg
                 </span>
               ) : (
@@ -98,7 +98,7 @@ export default function PackingList({
                         className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold ${
                           checked
                             ? "bg-emerald-500 text-white"
-                            : "bg-slate-200 text-slate-500"
+                            : "bg-slate-200 dark:bg-slate-600 text-slate-500 dark:text-slate-300"
                         }`}
                       >
                         {initials}

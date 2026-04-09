@@ -27,7 +27,7 @@ export default function PackingListSwitcher({
   }, [isPending, state.error, showForm, router]);
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4 sm:p-6 space-y-3">
+    <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-4 sm:p-6 space-y-3">
       <div className="overflow-x-auto">
         <div className="flex gap-2 flex-nowrap min-w-0">
           {lists.map((list) => (
@@ -40,7 +40,7 @@ export default function PackingListSwitcher({
               className={`shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition whitespace-nowrap ${
                 list.id === activeListId
                   ? "bg-emerald-600 text-white"
-                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                  : "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600"
               }`}
             >
               {list.name}
@@ -49,7 +49,7 @@ export default function PackingListSwitcher({
           <button
             type="button"
             onClick={() => setShowForm((v) => !v)}
-            className="shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition whitespace-nowrap bg-slate-100 text-slate-600 hover:bg-slate-200"
+            className="shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition whitespace-nowrap bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600"
           >
             + Ny liste
           </button>
@@ -64,7 +64,7 @@ export default function PackingListSwitcher({
             placeholder="Navn på liste"
             required
             autoFocus
-            className="flex-1 min-w-0 border border-slate-300 rounded-lg bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="flex-1 min-w-0 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
           />
           <button
             type="submit"
@@ -76,7 +76,7 @@ export default function PackingListSwitcher({
           <button
             type="button"
             onClick={() => setShowForm(false)}
-            className="shrink-0 px-4 py-2 bg-slate-100 text-slate-600 text-sm rounded-lg hover:bg-slate-200 transition font-medium"
+            className="shrink-0 px-4 py-2 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-sm rounded-lg hover:bg-slate-200 dark:hover:bg-slate-600 transition font-medium"
           >
             Avbryt
           </button>
