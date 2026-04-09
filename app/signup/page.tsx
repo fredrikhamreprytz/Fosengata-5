@@ -1,5 +1,5 @@
 import { signup } from "./actions";
-import { loginWithGoogle } from "@/app/login/actions";
+import { loginWithGoogle } from "@/app/auth/google-actions";
 
 export default async function SignupPage({
   searchParams,
