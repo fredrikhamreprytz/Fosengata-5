@@ -9,6 +9,10 @@
 
 When providing SQL to run (e.g. in Supabase), always present it as a clean code block with no markdown table characters (`│`, `|`, etc.) or other formatting artifacts — only valid SQL syntax.
 
+## Build Before Commit
+
+Always run `npm run build` before committing and pushing. Only commit if the build succeeds.
+
 ## Commit Messages
 
 Format: `[Fosengata 5] - short summary of changes`
