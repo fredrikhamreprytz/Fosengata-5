@@ -33,5 +33,3 @@ export async function login(formData: FormData) {
 
   await processHouseholdOnboarding();
 }
-
-export { loginWithGoogle } from "@/app/auth/google-actions";
